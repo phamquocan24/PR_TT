@@ -7,7 +7,6 @@ import FormSectionMixin from "./FormSectionMixin";
 import AttributeMixin from "./AttributeMixin";
 import VariationMixin from "./VariationMixin";
 import VariantMixin from "./VariantMixin";
-import BulkEditVariantsMixin from "./BulkEditVariantsMixin";
 import OptionMixin from "./OptionMixin";
 import DownloadMixin from "./DownloadMixin";
 import DataTransformMixin from "./DataTransformMixin";
@@ -29,7 +28,6 @@ export default {
         AttributeMixin,
         VariationMixin,
         VariantMixin,
-        BulkEditVariantsMixin,
         OptionMixin,
         DownloadMixin,
         DataTransformMixin,
