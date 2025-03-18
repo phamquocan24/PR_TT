@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class ModulesServiceProvider extends ServiceProvider
@@ -94,9 +95,19 @@ class ModulesServiceProvider extends ServiceProvider
     {
         $modulePath = base_path("modules/{$module->name}");
 
-        // Nạp Routes
+        // Nạp Routes Web
         if (file_exists($modulePath . '/Routes/web.php')) {
             $this->loadRoutesFrom($modulePath . '/Routes/web.php');
+        }
+
+        // Nạp Routes Admin
+        if (file_exists($modulePath . '/Routes/admin.php')) {
+            $this->loadAdminRoutes($modulePath . '/Routes/admin.php');
+        }
+
+        // Nạp Routes API
+        if (file_exists($modulePath . '/Routes/api.php')) {
+            $this->loadApiRoutes($modulePath . '/Routes/api.php');
         }
 
         // Nạp Views
@@ -120,5 +131,41 @@ class ModulesServiceProvider extends ServiceProvider
         if (is_dir($modulePath . '/Migrations')) {
             $this->loadMigrationsFrom($modulePath . '/Migrations');
         }
+
+        // Nạp Translations (Lang)
+        if (is_dir($modulePath . '/Resources/lang')) {
+            $this->loadTranslationsFrom($modulePath . '/Resources/lang', $module->alias);
+        }
+
+    }
+
+    /**
+     * Load admin-specific routes.
+     */
+    private function loadAdminRoutes(string $filePath): void
+    {
+        $routeAttributes = [
+            'prefix' => 'admin', // Định nghĩa đường dẫn prefix admin
+            'middleware' => ['web'], // Thêm middleware nếu cần
+        ];
+
+        Route::group($routeAttributes, function () use ($filePath) {
+            require $filePath;
+        });
+    }
+
+    /**
+     * Load API-specific routes.
+     */
+    private function loadApiRoutes(string $filePath): void
+    {
+        $routeAttributes = [
+            'prefix' => 'api', // Định nghĩa tiền tố api
+            'middleware' => ['api'], // Sử dụng nhóm middleware api
+        ];
+
+        Route::group($routeAttributes, function () use ($filePath) {
+            require $filePath;
+        });
     }
 }

@@ -1,29 +1,3 @@
-<div class="modal fade" id="keyboard-shortcuts-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <a type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M4.00073 11.9996L12 4.00037" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <path d="M12 11.9996L4.00073 4.00037" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                    </svg>
-                </a>
-                <h5 class="modal-title">{{ trans('admin::admin.shortcuts.available_shortcuts') }}</h5>
-            </div>
-
-            <div class="modal-body">
-                <dl class="dl-horizontal">
-                    <dt><code>?</code></dt>
-                    <dd>{{ trans('admin::admin.shortcuts.this_menu') }}</dd>
-                </dl>
-
-                @stack('shortcuts')
-            </div>
-        </div>
-    </div>
-</div>
-
 <footer class="main-footer">
     <a href="#" title="{{ trans('admin::admin.shortcuts.keyboard_shortcuts') }}" class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts-modal">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">

@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@melloware/coloris": "^0.24.0",
+        "vuedraggable": "^2.24.3"
+    }
+}

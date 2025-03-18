@@ -7,6 +7,11 @@
             "email": "envaysoft@gmail.com"
         }
     ],
+    "require": {
+        "php": "^8.1.0",
+        "maatwebsite/laravel-sidebar": "^3.0",
+        "yajra/laravel-datatables-oracle": "^10.3.1"
+    },
     "extra": {
         "laravel": {
             "providers": [],

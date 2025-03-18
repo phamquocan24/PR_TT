@@ -5,7 +5,6 @@ import "./jquery.keypressAction";
 
 import Admin from "./Admin";
 import Form from "./Form";
-import DataTable from "./DataTable";
 import {
     trans,
     keypressAction,
@@ -26,7 +25,6 @@ if (
 }
 
 window.form = new Form();
-window.DataTable = DataTable;
 
 window.trans = trans;
 window.keypressAction = keypressAction;

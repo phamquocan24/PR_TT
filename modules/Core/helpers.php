@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Support\Str;
 use App\Ecommerce;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Request;
 
 if (! function_exists('module_path')) {
     function module_path($name, $path = '')
@@ -136,3 +137,23 @@ if (!function_exists('ecommerce_version')) {
     }
 }
 
+if (!function_exists('activeMenu')) {
+    function activeMenu($url, $subUrl = null)
+    {
+        $segment2 = Request::segment(2);
+        $segment3 = Request::segment(3);
+
+        $class = ['main' => null, 'sub' => null];
+        if ($segment2 == $url) {
+            $class['main'] = 'active';
+            if ($segment2 == 'setting' && $segment3 == $subUrl) {
+                $class['sub'] = 'active';
+            }
+            if ($segment3 == $subUrl) {
+                $class['sub'] = 'active';
+            }
+        }
+
+        return $class;
+    }
+}
