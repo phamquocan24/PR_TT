@@ -658,31 +658,32 @@ fieldset[disabled] .btn-info {
 }
 
 /* select option */
-
-.custom-select-white {
-    appearance: none;
-    background: #f9f9f9 url("../images/arrow-white.png") no-repeat right 8px
+.ltr {
+    .custom-select-white {
+        appearance: none;
+        background: #f9f9f9 url("../images/arrow-white.png") no-repeat right 8px
         center;
-    background-size: 10px;
-    line-height: normal !important;
-    height: 40px;
-    padding: 0 30px 0 10px;
-    border-radius: 3px;
-    border-color: #d9d9d9;
-}
+        background-size: 10px;
+        line-height: normal !important;
+        height: 40px;
+        padding: 0 30px 0 10px;
+        border-radius: 3px;
+        border-color: #d9d9d9;
+    }
 
-.custom-select-black {
-    appearance: none;
-    background: #ffffff url("../images/arrow-black.png") no-repeat right 8px
+    .custom-select-black {
+        appearance: none;
+        background: #ffffff url("../images/arrow-black.png") no-repeat right 8px
         center;
-    background-size: 10px;
-    height: 40px;
-    padding: 0 30px 0 10px;
-    border-radius: 3px;
-    border-color: #d9d9d9;
-}
+        background-size: 10px;
+        height: 40px;
+        padding: 0 30px 0 10px;
+        border-radius: 3px;
+        border-color: #d9d9d9;
+    }
 
-.custom-select-white:focus,
-.custom-select-black:focus {
-    outline: 0;
+    .custom-select-white:focus,
+    .custom-select-black:focus {
+        outline: 0;
+    }
 }
