@@ -30,7 +30,7 @@
         @include('admin::partials.globals')
     </head>
 
-    <body class="skin-blue sidebar-mini offcanvas clearfix ltr" dir>
+    <body class="skin-blue sidebar-mini offcanvas clearfix ltr" dir="ltr">
         <div class="left-side"></div>
 
         @include('admin::partials.sidebar')
