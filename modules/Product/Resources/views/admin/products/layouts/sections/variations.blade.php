@@ -280,6 +280,27 @@
                 <button type="button" class="btn btn-default" @click="addVariation">
                     {{ trans('product::products.variations.add_variation') }}
                 </button>
+                <div class="insert-template">
+                    <select class="form-control custom-select-black" v-model="globalVariationId">
+                        <option value="">
+                            {{ trans('product::products.form.variations.select_template') }}
+                        </option>
+
+                        @foreach (collect([]) as $globalVariation)
+                            <option value="{{ $globalVariation->id }}">{{ $globalVariation->name }}</option>
+                        @endforeach
+                    </select>
+
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        :class="{ 'btn-loading': addingGlobalVariation }"
+                        :disabled="isAddGlobalVariationDisabled"
+                        @click="addGlobalVariation"
+                    >
+                        {{ trans('product::products.variations.insert') }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
