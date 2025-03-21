@@ -1,28 +1,42 @@
 @extends('admin::layout')
-
+ 
 @component('admin::components.page.header')
     @slot('title', trans('variation::variations.variations'))
-
+ 
     <li class="active">{{ trans('variation::variations.variations') }}</li>
 @endcomponent
-
+ 
 @component('admin::components.page.index_table')
     @slot('buttons', ['create'])
     @slot('resource', 'variations')
     @slot('name', trans('variation::variations.variation'))
-
+ 
     @slot('thead')
         <tr>
             @include('admin::partials.table.select_all')
-
+ 
             <th>{{ trans('admin::admin.table.id') }}</th>
             <th>{{ trans('variation::variations.table.name') }}</th>
             <th>{{ trans('variation::variations.table.type') }}</th>
             <th data-sort>{{ trans('admin::admin.table.updated') }}</th>
         </tr>
     @endslot
+ 
+    @slot('tbody')
+        @foreach ($variations as $variation)
+            <tr>
+                <td>
+                    <input type='checkbox' class='select-item' value='{$variation->id}'>
+                </td>
+                <td>{{ $variation->id}}</td>
+                <td>{{$variation->uid}}</td>
+                <td>{{$variation->type}}</td>
+                <td>{{$variation->updated_at}}</td>
+            </tr>
+        @endforeach
+    @endslot
 @endcomponent
-
+ 
 @push('scripts')
     <script type="module">
         new DataTable('#variations-table .table', {
@@ -35,4 +49,10 @@
             ],
         });
     </script>
+    <form action="{{ route('admin.variations.destroy', $variation->id) }}" method="POST" style="display: inline;">
+    @csrf
+    @method('DELETE')
+    <button type="submit" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</button>
+</form>
+
 @endpush

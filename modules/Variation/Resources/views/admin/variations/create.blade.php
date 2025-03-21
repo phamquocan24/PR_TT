@@ -1,38 +1,26 @@
 @extends('admin::layout')
 
-@component('admin::components.page.header')
-    @slot('title', trans('admin::resource.create', ['resource' => trans('variation::variations.variation')]))
-
-    <li><a href="{{ route('admin.variations.index') }}">{{ trans('variation::variations.variations') }}</a></li>
-    <li class="active">{{ trans('admin::resource.create', ['resource' => trans('variation::variations.variation')]) }}</li>
-@endcomponent
-
 @section('content')
-    <div class="box">
-        <div class="box-body">
-            <div id="app">
-                <form
-                    class="form"
-                    @input="errors.clear($event.target.name)"
-                    @submit.prevent
-                    ref="form"
-                >
-                    @include('variation::admin.variations.partials.general')
-                    @include('variation::admin.variations.partials.values')
-                    @include('variation::admin.variations.partials.submit')
-                </form>
-            </div>
+    <h1>Thêm Variation</h1>
+
+    <form action="{{ route('admin.variations.store') }}" method="POST">
+        @csrf
+        <div>
+            <label for="name">Tên Variation:</label>
+            <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+            @error('name')
+                <div style="color: red;">{{ $message }}</div>
+            @enderror
         </div>
-    </div>
+
+        <div>
+            <label for="type">Loại:</label>
+            <input type="text" id="type" name="type" value="{{ old('type') }}" required>
+            @error('type')
+                <div style="color: red;">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit">Thêm</button>
+    </form>
 @endsection
-
-@include('variation::admin.variations.partials.scripts')
-
-@push('globals')
-    @vite([
-        'modules/Variation/Resources/assets/admin/sass/main.scss',
-        'modules/Variation/Resources/assets/admin/js/create.js',
-        'modules/Media/Resources/assets/admin/sass/main.scss',
-        'modules/Media/Resources/assets/admin/js/main.js',
-    ])
-@endpush
