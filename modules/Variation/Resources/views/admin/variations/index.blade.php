@@ -21,6 +21,20 @@
             <th data-sort>{{ trans('admin::admin.table.updated') }}</th>
         </tr>
     @endslot
+
+    @slot('tbody')
+        @foreach ($variations as $variation)
+            <tr>
+                <td>
+                    <input type='checkbox' class='select-item' value='{$variation->id}'>
+                </td>
+                <td>{{ $variation->id}}</td>
+                <td>{{$variation->uid}}</td>
+                <td>{{$variation->type}}</td>
+                <td>{{$variation->updated_at}}</td>
+            </tr>
+        @endforeach
+    @endslot
 @endcomponent
 
 @push('scripts')
