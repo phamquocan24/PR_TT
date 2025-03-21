@@ -26,12 +26,10 @@
             </td>
             <td class="dt-type-numeric">{{ $product->id }}</td>
             <td>
-                <!--
                 <div class="thumbnail-holder">
-                    <img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg" alt="thumbnail">
+                    {{ $product->slug }}
+                    <!--<img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg" alt="thumbnail">-->
                 </div>
-                -->
-                {{ $product->slug }}
             </td>
             <td>
                 <a class="name" href="#">{{ $product->sku }}</a>
@@ -45,49 +43,20 @@
                 @endif
             </td>
             <td>
-                <span class="badge badge-primary {{ $product->in_stock ? 'bg-success' : 'bg-danger' }}">
-                    {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
-                </span>
+                <span class="badge badge-primary {{ $product->in_stock ? 'bg-success' : 'bg-danger' }}">{{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}</span>
             </td>
             <td>
-                <span class="badge badge-success {{ $product->is_active ? 'bg-primary' : 'bg-secondary' }}">
-                    {{ $product->is_active ? 'Active' : 'UnActive' }}
-                </span>
+                <span class="badge badge-success {{ $product->is_active ? 'bg-primary' : 'bg-secondary' }}">{{ $product->is_active ? 'Active' : 'UnActive' }}</span>
             </td>
             <td class="sorting_1">
-                <span data-toggle="tooltip" title="Mar 15, 2025">{{ $product->updated_at->diffForHumans() }}</span>
+                {{ $product->updated_at->diffForHumans() }}
             </td>
         </tr>
     @endforeach
-        <tr>
-            <td colspan="8" class="dt-empty">No data available in table</td>
-        </tr>
-
+    <tr>
+        <td colspan="8" class="dt-empty">No data available in table</td>
+    </tr>
     @endslot
-
-    @slot('ttotal')
-        <div >
-            <label class="dt-info" aria-live="polite" id="DataTables_Table_0_info" role="status">
-                {{ "Show $perPage of $totalProducts products" }}
-            </label>
-        </div>
-    @endslot
-
-    @slot('tchange')
-    <div class="row dt-layout-row">
-                <div class="dt-paging">
-                    <nav aria-label="pagination">
-                        <ul class="pagination">
-                            <li class="dt-paging-button page-item">
-                                {{ $products->appends(request()->query())->links('pagination::bootstrap-4') }}
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-    @endslot
-
-
 @endcomponent
 
 @if (session()->has('exit_flash'))
@@ -113,4 +82,5 @@
     <script type="module">
 
     </script>
+
 @endpush
