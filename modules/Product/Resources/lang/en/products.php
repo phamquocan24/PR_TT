@@ -15,7 +15,7 @@ return [
 
     'table' => [
         'thumbnail' => 'Thumbnail',
-        'slug' => 'Name',
+        'name' => 'Name',
         'price' => 'Price',
         'stock' => 'Stock',
     ],
