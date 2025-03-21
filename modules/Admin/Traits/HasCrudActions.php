@@ -1,9 +1,17 @@
 <?php
+<<<<<<< HEAD
+ 
+namespace Modules\Admin\Traits;
+ 
+use Illuminate\Http\Request;
+ 
+=======
 
 namespace Modules\Admin\Traits;
 
 use Illuminate\Http\Request;
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
 trait HasCrudActions
 {
     /**
@@ -16,7 +24,11 @@ trait HasCrudActions
         $model = $this->model::all();
         return view("{$this->viewPath}.index", compact('model'));
     }
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Show the form for creating a new resource.
      *
@@ -26,7 +38,11 @@ trait HasCrudActions
     {
         return view("{$this->viewPath}.create");
     }
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Store a newly created resource in storage.
      *
@@ -36,12 +52,21 @@ trait HasCrudActions
     public function store(Request $request)
     {
         $this->validateRequest($request);
+<<<<<<< HEAD
+ 
+        $this->model::create($request->all());
+ 
+        return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource created successfully.');
+    }
+ 
+=======
 
         $this->model::create($request->all());
 
         return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource created successfully.');
     }
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Display the specified resource.
      *
@@ -53,7 +78,11 @@ trait HasCrudActions
         $model = $this->model::findOrFail($id);
         return view("{$this->viewPath}.show", compact('model'));
     }
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Show the form for editing the specified resource.
      *
@@ -65,7 +94,11 @@ trait HasCrudActions
         $model = $this->model::findOrFail($id);
         return view("{$this->viewPath}.edit", compact('model'));
     }
+<<<<<<< HEAD
+ 
+=======
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Update the specified resource in storage.
      *
@@ -76,6 +109,15 @@ trait HasCrudActions
     public function update(Request $request, $id)
     {
         $this->validateRequest($request);
+<<<<<<< HEAD
+ 
+        $model = $this->model::findOrFail($id);
+        $model->update($request->all());
+ 
+        return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource updated successfully.');
+    }
+ 
+=======
 
         $model = $this->model::findOrFail($id);
         $model->update($request->all());
@@ -83,6 +125,7 @@ trait HasCrudActions
         return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource updated successfully.');
     }
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Remove the specified resource from storage.
      *
@@ -93,10 +136,17 @@ trait HasCrudActions
     {
         $model = $this->model::findOrFail($id);
         $model->delete();
+<<<<<<< HEAD
+ 
+        return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource deleted successfully.');
+    }
+ 
+=======
 
         return redirect()->route("{$this->viewPath}.index")->with('success', 'Resource deleted successfully.');
     }
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Validate the incoming request.
      *
@@ -110,4 +160,9 @@ trait HasCrudActions
             'type' => 'required|string|max:255',
         ]);
     }
+<<<<<<< HEAD
 }
+ 
+=======
+}
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674

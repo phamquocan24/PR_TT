@@ -18,3 +18,6 @@ Route::put('variations/{id}', [VariationController::class, 'update'])->name('adm
 Route::delete('variations/{ids}', [VariationController::class, 'destroy'])->name('admin.variations.destroy');
 
 Route::get('variations/index/table', [VariationController::class, 'table'])->name('admin.variations.table');
+
+Route::delete('variations/{id}', [VariationController::class, 'destroy'])->name('admin.variations.destroy');
+

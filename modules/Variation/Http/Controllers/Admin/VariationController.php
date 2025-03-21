@@ -7,41 +7,61 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+<<<<<<< HEAD
+=======
 use Modules\Admin\Traits\HasCrudActions;
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
 use Modules\Variation\Models\Variation;
 
 class VariationController
 {
-    use HasCrudActions;
-
     /**
-     * Model for the resource.
+     * Hiển thị danh sách dữ liệu.
      *
-     * @var string
+     * @return View
      */
-//    protected string $model = Variation::class;
+    public function index()
+    {
+        $variations = Variation::all(); // Lấy tất cả dữ liệu từ bảng
+        return view('variation::admin.variations.index', compact('variations')); // Trả về view cùng dữ liệu
+    }
 
     /**
-     * Label of the resource.
+     * Hiển thị form thêm dữ liệu mới.
      *
-     * @var string
+     * @return View
      */
-    protected string $label = 'variation::variations.variation';
+    public function create()
+    {
+        return view('variation::admin.variations.create'); // Hiển thị form thêm
+    }
 
     /**
-     * View path of the resource.
+     * Lưu dữ liệu mới vào cơ sở dữ liệu.
      *
-     * @var string
-     */
-    protected string $viewPath = 'variation::admin.variations';
-
-    /**
-     * Store a newly created resource in storage.
-     *
+     * @param Request $request
      * @return Response
      */
-    public function index(Request $request)
+    public function store(Request $request)
     {
+<<<<<<< HEAD
+        // Xác thực dữ liệu
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+        ]);
+
+        // Tạo bản ghi mới
+        Variation::create([
+            'name' => $request->name,
+            'type' => $request->type,
+        ]);
+
+        // Chuyển hướng về danh sách với thông báo
+        return redirect()->route('admin.variations.index')->with('success', 'Dữ liệu đã được thêm thành công!');
+    }
+
+=======
         $variations = Variation::orderBy('position', 'DESC')->get();// Lấy dữ liệu từ cơ sở dữ liệu
 
         // Trả về view cùng với các biến
@@ -54,15 +74,69 @@ class VariationController
     }
 
 
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
-     * Show the form for editing the specified resource.
+     * Hiển thị chi tiết dữ liệu (nếu cần).
      *
      * @param int $id
+     * @return View
+     */
+    public function show($id)
+    {
+        $variation = Variation::findOrFail($id); // Lấy dữ liệu theo ID
+        return view('variation::admin.variations.show', compact('variation')); // Trả về view hiển thị chi tiết
+    }
+
+    /**
+     * Hiển thị form sửa dữ liệu.
      *
-     * @return Application|Factory|View
+     * @param int $id
+     * @return View
      */
     public function edit($id)
     {
+        $variation = Variation::findOrFail($id); // Lấy dữ liệu theo ID
+        return view('variation::admin.variations.edit', compact('variation')); // Trả về form chỉnh sửa
+    }
 
+    /**
+     * Cập nhật dữ liệu vào cơ sở dữ liệu.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Response
+     */
+    public function update(Request $request, $id)
+    {
+        // Xác thực dữ liệu
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+        ]);
+
+        // Tìm và cập nhật bản ghi
+        $variation = Variation::findOrFail($id);
+        $variation->update([
+            'name' => $request->name,
+            'type' => $request->type,
+        ]);
+
+        // Chuyển hướng về danh sách với thông báo
+        return redirect()->route('admin.variations.index')->with('success', 'Dữ liệu đã được cập nhật thành công!');
+    }
+
+    /**
+     * Xóa bản ghi khỏi cơ sở dữ liệu.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function destroy($id)
+    {
+        $variation = Variation::findOrFail($id); // Lấy dữ liệu theo ID
+        $variation->delete(); // Xóa bản ghi
+
+        // Chuyển hướng về danh sách với thông báo
+        return redirect()->route('admin.variations.index')->with('success', 'Dữ liệu đã được xóa thành công!');
     }
 }
