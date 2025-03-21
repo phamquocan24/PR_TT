@@ -7,6 +7,10 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+<<<<<<< HEAD
+=======
+use Modules\Admin\Traits\HasCrudActions;
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
 use Modules\Variation\Models\Variation;
 
 class VariationController
@@ -40,6 +44,7 @@ class VariationController
      */
     public function store(Request $request)
     {
+<<<<<<< HEAD
         // Xác thực dữ liệu
         $request->validate([
             'name' => 'required|string|max:255',
@@ -56,6 +61,20 @@ class VariationController
         return redirect()->route('admin.variations.index')->with('success', 'Dữ liệu đã được thêm thành công!');
     }
 
+=======
+        $variations = Variation::orderBy('position', 'DESC')->get();// Lấy dữ liệu từ cơ sở dữ liệu
+
+        // Trả về view cùng với các biến
+        return view("{$this->viewPath}.index", compact(var_name: 'variations'));
+    }
+
+    public function show($id)
+    {
+
+    }
+
+
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     /**
      * Hiển thị chi tiết dữ liệu (nếu cần).
      *

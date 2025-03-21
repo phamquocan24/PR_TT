@@ -69,8 +69,15 @@
                             <span>Variations</span>
                         </a>
                     </li>
-                    <li class="">
-                        <a href="http://127.0.0.1:8001/admin/options" class="">
+                    <li class="{{ activeMenu('options')['sub'] }}">
+                        <a href="{{ route('admin.options.index') }}" class="">
+                            <i class="fa fa-angle-double-right"></i>
+                            <span>Options</span>
+                        </a>
+                    </li>
+
+                    <li class="{{ activeMenu('options')['sub'] }}">
+                        <a href="{{ route('admin.options.index') }}" class="">
                             <i class="fa fa-angle-double-right"></i>
                             <span>Options</span>
                         </a>

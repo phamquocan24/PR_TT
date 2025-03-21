@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Seeders;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Carbon\Carbon;
+class ProductsTableSeeder extends Seeder
+{
+    public function run()
+    {
+        $now = Carbon::now();
+        DB::table('products')->insert([
+            ['brand_id' => 1, 'tax_class_id' => 1, 'slug' => 'product-1', 'price' => 100.00, 'special_price' => 90.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-01-01', 'special_price_end' => '2025-01-31', 'selling_price' => 90.00, 'sku' => 'SKU001', 'manage_stock' => 1, 'qty' => 100, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-01-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 2, 'tax_class_id' => 1, 'slug' => 'product-2', 'price' => 200.00, 'special_price' => 180.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-02-01', 'special_price_end' => '2025-02-28', 'selling_price' => 180.00, 'sku' => 'SKU002', 'manage_stock' => 1, 'qty' => 200, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-02-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 3, 'tax_class_id' => 1, 'slug' => 'product-3', 'price' => 300.00, 'special_price' => 270.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-03-01', 'special_price_end' => '2025-03-31', 'selling_price' => 270.00, 'sku' => 'SKU003', 'manage_stock' => 1, 'qty' => 300, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-03-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 4, 'tax_class_id' => 1, 'slug' => 'product-4', 'price' => 400.00, 'special_price' => 360.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-04-01', 'special_price_end' => '2025-04-30', 'selling_price' => 360.00, 'sku' => 'SKU004', 'manage_stock' => 1, 'qty' => 400, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-04-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 5, 'tax_class_id' => 1, 'slug' => 'product-5', 'price' => 500.00, 'special_price' => 450.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-05-01', 'special_price_end' => '2025-05-31', 'selling_price' => 450.00, 'sku' => 'SKU005', 'manage_stock' => 1, 'qty' => 500, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-05-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 6, 'tax_class_id' => 1, 'slug' => 'product-6', 'price' => 600.00, 'special_price' => 540.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-06-01', 'special_price_end' => '2025-06-30', 'selling_price' => 540.00, 'sku' => 'SKU006', 'manage_stock' => 1, 'qty' => 600, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-06-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 7, 'tax_class_id' => 1, 'slug' => 'product-7', 'price' => 700.00, 'special_price' => 630.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-07-01', 'special_price_end' => '2025-07-31', 'selling_price' => 630.00, 'sku' => 'SKU007', 'manage_stock' => 1, 'qty' => 700, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-07-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 8, 'tax_class_id' => 1, 'slug' => 'product-8', 'price' => 800.00, 'special_price' => 720.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-08-01', 'special_price_end' => '2025-08-31', 'selling_price' => 720.00, 'sku' => 'SKU008', 'manage_stock' => 1, 'qty' => 800, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-08-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 9, 'tax_class_id' => 1, 'slug' => 'product-9', 'price' => 900.00, 'special_price' => 810.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-09-01', 'special_price_end' => '2025-09-30', 'selling_price' => 810.00, 'sku' => 'SKU009', 'manage_stock' => 1, 'qty' => 900, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-09-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+            ['brand_id' => 10, 'tax_class_id' => 1, 'slug' => 'product-10', 'price' => 1000.00, 'special_price' => 900.00, 'special_price_type' => 'fixed', 'special_price_start' => '2025-10-01', 'special_price_end' => '2025-10-31', 'selling_price' => 900.00, 'sku' => 'SKU010', 'manage_stock' => 1, 'qty' => 1000, 'in_stock' => 1, 'viewed' => 0, 'is_active' => 1, 'new_from' => '2025-10-01 00:00:00', 'new_to' => '2025-12-31 23:59:59', 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null],
+        ]);
+    }
+}

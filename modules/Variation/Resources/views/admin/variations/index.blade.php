@@ -21,7 +21,11 @@
             <th data-sort>{{ trans('admin::admin.table.updated') }}</th>
         </tr>
     @endslot
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 107ea20b73064cac3ce194c2f67a6d41b37b3674
     @slot('tbody')
         @foreach ($variations as $variation)
             <tr>
