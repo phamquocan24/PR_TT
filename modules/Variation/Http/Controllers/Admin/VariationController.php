@@ -8,6 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Admin\Traits\HasCrudActions;
+use Modules\Variation\Models\Variation;
 
 class VariationController
 {
@@ -41,9 +42,11 @@ class VariationController
      */
     public function index(Request $request)
     {
-        return view("{$this->viewPath}.index");
-    }
+        $variations = Variation::orderBy('position', 'DESC')->get();// Lấy dữ liệu từ cơ sở dữ liệu
 
+        // Trả về view cùng với các biến
+        return view("{$this->viewPath}.index", compact(var_name: 'variations'));
+    }
 
     public function show($id)
     {

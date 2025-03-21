@@ -27,3 +27,4 @@ class Variation extends Model
     }
 
 }
+
