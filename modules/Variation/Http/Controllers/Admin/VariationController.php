@@ -7,7 +7,6 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Admin\Traits\HasCrudActions;
 use Modules\Variation\Models\Variation;
 
 class VariationController
@@ -55,15 +54,7 @@ class VariationController
 
         // Chuyển hướng về danh sách với thông báo
         return redirect()->route('admin.variations.index')->with('success', 'Dữ liệu đã được thêm thành công!');
-    
-
-
-        $variations = Variation::orderBy('position', 'DESC')->get();// Lấy dữ liệu từ cơ sở dữ liệu
-
-        // Trả về view cùng với các biến
-        return view("{$this->$viewPath}.index", compact(var_name: 'variations'));
     }
-
 
     /**
      * Hiển thị chi tiết dữ liệu (nếu cần).
