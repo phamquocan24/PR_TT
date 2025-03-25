@@ -41,4 +41,9 @@ class ProductVariant extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function setSpecialPriceTypeAttribute($value)
+    {
+        $this->attributes['special_price_type'] = ($value === 'fixed') ? 1 : 2;
+    }
 }

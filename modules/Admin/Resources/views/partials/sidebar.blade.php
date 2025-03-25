@@ -69,19 +69,6 @@
                             <span>Variations</span>
                         </a>
                     </li>
-                    <li class="{{ activeMenu('options')['sub'] }}">
-                        <a href="{{ route('admin.options.index') }}" class="">
-                            <i class="fa fa-angle-double-right"></i>
-                            <span>Options</span>
-                        </a>
-                    </li>
-
-                    <li class="{{ activeMenu('options')['sub'] }}">
-                        <a href="{{ route('admin.options.index') }}" class="">
-                            <i class="fa fa-angle-double-right"></i>
-                            <span>Options</span>
-                        </a>
-                    </li>
                 </ul>
             </li>
         </ul>

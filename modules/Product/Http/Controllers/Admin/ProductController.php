@@ -10,11 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\Admin\Traits\HasCrudActions;
 use Carbon\Carbon;
-use App\Models\Product;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Variation;
-
+use Modules\Product\Entities\Product;
+use Modules\Product\Entities\ProductVariant;
+use Modules\Brand\Entities\Brand;
+use Modules\Category\Entities\Category;
+use Modules\Variation\Entities\Variation;
 class ProductController
 {
     /**
@@ -118,11 +118,33 @@ class ProductController
      *
      * @return Response|JsonResponse
      */
-    public function store()
+    public function store(Request $request)
     {
+        dd($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:191',
+            'brand_id' => 'required|exists:brands,id',
+            'price' => 'required|numeric|min:0',
+            'sku' => 'required|string|unique:products,sku|max:191',
+            'variants' => 'nullable|array',
+        ]);
 
+        $product = Product::create($validated);
+
+        // Nếu có biến thể, lưu vào database
+        if ($request->has('variants')) {
+            foreach ($request->variants as $variant) {
+                ProductVariant::create([
+                    'product_id' => $product->id,
+                    'name' => $variant['name'],
+                    'price' => $variant['price'],
+                    'sku' => $variant['sku'],
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được lưu!');
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -145,6 +167,18 @@ class ProductController
     public function update($id)
     {
 
+    }
+    public function delete(Request $request)
+    {
+        $productIds = $request->input('product_ids');
+
+        if (empty($productIds)) {
+            return response()->json(['success' => false, 'message' => 'Không có sản phẩm nào được chọn!']);
+        }
+
+        Product::whereIn('id', $productIds)->delete();
+
+        return response()->json(['success' => true, 'message' => 'Sản phẩm đã bị xóa thành công!']);
     }
 
     /**

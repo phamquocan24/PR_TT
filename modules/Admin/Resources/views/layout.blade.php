@@ -15,6 +15,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+
         <script src="{{ v(asset('build/assets/jquery.min.js')) }}"></script>
         <script src="{{ v(asset('build/assets/bootstrap.min.js')) }}"></script>
         <script src="{{ v(asset('build/assets/selectize.min.js')) }}"></script>
@@ -56,6 +57,7 @@
         @include('admin::partials.footer')
         @include('admin::partials.confirmation_modal')
 
+        @routes
         @stack('scripts')
     </body>
 </html>

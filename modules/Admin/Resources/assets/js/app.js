@@ -2,6 +2,8 @@ import "flatpickr";
 import "mousetrap";
 import "./Ecommerce";
 import "./jquery.keypressAction";
+import route from 'ziggy-js';
+
 
 import Admin from "./Admin";
 import Form from "./Form";
@@ -33,6 +35,7 @@ window.info = info;
 window.success = success;
 window.warning = warning;
 window.error = error;
+window.route = route;
 
 $.ajaxSetup({
     headers: {

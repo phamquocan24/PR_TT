@@ -16,8 +16,11 @@
                     name="name"
                     id="name"
                     class="form-control"
+                    required
                 >
-                <span class="help-block text-red">The name field is required</span>
+                @error('name')
+                    <span class="help-block text-red">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -34,7 +37,9 @@
                     class="form-control wysiwyg"
                 >
                 </textarea>
-                <span class="help-block text-red">The name field is required</span>
+                @error('description')
+                    <span class="help-block text-red">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -44,13 +49,15 @@
                 <span class="text-red">*</span>
             </label>
             <div class="col-sm-6">
-                <select name="brand_id" id="brand-id" class="form-control custom-select-black">
+                <select name="brand_id" id="brand-id" class="form-control custom-select-black" required>
                     <option value="">Please Select</option>
                         @foreach($brands as $brand)
-                            <option value="{{ $brand->id }}">{{ $brand->slug }}</option>
+                            <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                         @endforeach
                 </select>
-                <span class="help-block text-red">The name field is required</span>
+                @error('brand_id')
+                    <span class="help-block text-red">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -61,13 +68,15 @@
             </label>
 
             <div class="col-sm-6">
-                <select name="categories" id="categories-id" class="form-control custom-select-black">
+                <select name="categories" id="categories-id" class="form-control custom-select-black" required>
                     <option value="">Please Select</option>
                         @foreach($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->slug }}</option>
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                 </select>
-                <span class="help-block text-red">The name field is required</span>
+                @error('categories')
+                    <span class="help-block text-red">{{ $message }}</span>
+                @enderror
             </div>
         </div>
 
@@ -84,8 +93,6 @@
                     <label for="is-active">
                         {{ trans('product::products.form.enable_the_product') }}
                     </label>
-
-                    <span class="help-block text-red">The name field is required</span>
                 </div>
             </div>
         </div>

@@ -65,4 +65,10 @@ class Product extends Model
     {
         return $this->belongsToMany(Variation::class, 'product_variations', 'product_id', 'variation_id');
     }
+
+    public function setSpecialPriceTypeAttribute($value)
+    {
+        $this->attributes['special_price_type'] = ($value === 'fixed') ? 1 : 2;
+    }
+
 }
