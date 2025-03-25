@@ -4,25 +4,28 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class BrandsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
+        $now = Carbon::now();
+
         DB::table('brands')->insert([
-            ['slug' => 'brand-1', 'is_active' => 1],
-            ['slug' => 'brand-2', 'is_active' => 1],
-            ['slug' => 'brand-3', 'is_active' => 1],
-            ['slug' => 'brand-4', 'is_active' => 1],
-            ['slug' => 'brand-5', 'is_active' => 1],
-            ['slug' => 'brand-6', 'is_active' => 1],
-            ['slug' => 'brand-7', 'is_active' => 1],
-            ['slug' => 'brand-8', 'is_active' => 1],
-            ['slug' => 'brand-9', 'is_active' => 1],
-            ['slug' => 'brand-10', 'is_active' => 1],
+            ['name' => 'Brand 1', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 2', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 3', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 4', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 5', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 6', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 7', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 8', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 9', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Brand 10', 'is_active' => 1, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

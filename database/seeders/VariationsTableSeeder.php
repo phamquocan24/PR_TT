@@ -4,25 +4,28 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class VariationsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
+        $now = Carbon::now();
+
         DB::table('variations')->insert([
-            ['uid' => 'uid-1', 'type' => 'type-1', 'is_global' => 1, 'position' => 1],
-            ['uid' => 'uid-2', 'type' => 'type-2', 'is_global' => 1, 'position' => 2],
-            ['uid' => 'uid-3', 'type' => 'type-3', 'is_global' => 1, 'position' => 3],
-            ['uid' => 'uid-4', 'type' => 'type-4', 'is_global' => 1, 'position' => 4],
-            ['uid' => 'uid-5', 'type' => 'type-5', 'is_global' => 1, 'position' => 5],
-            ['uid' => 'uid-6', 'type' => 'type-6', 'is_global' => 1, 'position' => 6],
-            ['uid' => 'uid-7', 'type' => 'type-7', 'is_global' => 1, 'position' => 7],
-            ['uid' => 'uid-8', 'type' => 'type-8', 'is_global' => 1, 'position' => 8],
-            ['uid' => 'uid-9', 'type' => 'type-9', 'is_global' => 1, 'position' => 9],
-            ['uid' => 'uid-10', 'type' => 'type-10', 'is_global' => 1, 'position' => 10],
+            ['name' => 'Size', 'type' => 'dropdown', 'is_global' => 1, 'position' => 1, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Color', 'type' => 'color', 'is_global' => 1, 'position' => 2, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Material', 'type' => 'dropdown', 'is_global' => 1, 'position' => 3, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Style', 'type' => 'dropdown', 'is_global' => 1, 'position' => 4, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Weight', 'type' => 'text', 'is_global' => 1, 'position' => 5, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Dimension', 'type' => 'text', 'is_global' => 1, 'position' => 6, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Package', 'type' => 'dropdown', 'is_global' => 1, 'position' => 7, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Flavor', 'type' => 'dropdown', 'is_global' => 1, 'position' => 8, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Volume', 'type' => 'text', 'is_global' => 1, 'position' => 9, 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'Pattern', 'type' => 'dropdown', 'is_global' => 1, 'position' => 10, 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

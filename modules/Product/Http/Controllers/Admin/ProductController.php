@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+
 use Modules\Admin\Enums\StatusResponse;
 use Modules\Product\Entities\Product;
 use Modules\Product\Entities\ProductVariant;
@@ -18,7 +19,7 @@ use Modules\Category\Entities\Category;
 use Modules\Variation\Entities\Variation;
 use Modules\Product\Services\ProductService;
 
-use Modules\Product\Http\Request\ProductRequest;
+
 
 class ProductController
 
