@@ -17,4 +17,8 @@ Route::delete('products/{ids}', [ProductController::class, 'destroy'])->name('ad
 
 Route::get('products/index/table', [ProductController::class, 'table'])->name('admin.products.table');
 
+<<<<<<< HEAD
 Route::post('/products/delete', [ProductController::class, 'delete'])->name('admin.products.delete');
+=======
+Route::get('products/search', [ProductController::class, 'search'])->name('admin.products.search');
+>>>>>>> 501eafa (2050325)

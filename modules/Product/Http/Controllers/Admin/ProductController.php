@@ -326,6 +326,83 @@ class ProductController
 
 
     /**
+     * Search for products.
+     *
+     * @param Request $request
+     * @return JsonResponse|View
+     */
+    public function search(Request $request)
+    {
+        $search = $request->input('search', '');
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort', 'asc');
+        $perPage = $request->input('per_page', 10);
+
+        // Danh sách cột có thể sắp xếp
+        $sortableColumns = ['id', 'name', 'price', 'in_stock', 'updated_at'];
+
+        // Kiểm tra nếu cột không hợp lệ, đặt lại thành 'id'
+        if (!in_array($sortBy, $sortableColumns)) {
+            $sortBy = 'id';
+        }
+
+        // Kiểm tra thứ tự sắp xếp
+        if (!in_array(strtolower($sortOrder), ['asc', 'desc'])) {
+            $sortOrder = 'asc';
+        }
+
+        // Truy vấn tìm kiếm
+        $query = Product::with(['brand', 'categories']);
+
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('price', 'like', "%{$search}%");
+            });
+        }
+
+        $totalProducts = $query->count();
+        $products = $query->orderBy($sortBy, $sortOrder)->paginate($perPage);
+
+        // Định dạng dữ liệu
+        $products->getCollection()->transform(function ($product) {
+            $now = Carbon::now();
+
+            // Kiểm tra nếu ngày hiện tại nằm trong khoảng giảm giá
+            $isDiscountActive = $product->special_price_start && $product->special_price_end &&
+                                $now->between($product->special_price_start, $product->special_price_end);
+
+            // Định dạng giá
+            if ($isDiscountActive && $product->selling_price && $product->selling_price != $product->price) {
+                $product->formatted_price = "<span class='text-danger fw-bold'>" . number_format($product->selling_price, 2) . " VNĐ</span> " .
+                                            "<del class='text-muted ms-2'>" . number_format($product->price, 2) . " VNĐ</del>";
+            } else {
+                $product->formatted_price = "<span class='fw-bold'>" . number_format($product->price, 2) . " VNĐ</span>";
+            }
+
+            // Tính thời gian cập nhật
+            $days_diff = $now->diffInDays($product->updated_at);
+            $product->formatted_updated_at = ($days_diff < 30) ?
+                "<span class='text-success'>{$days_diff} ngày trước</span>" :
+                "<span class='text-primary'>" . floor($days_diff / 30) . " tháng trước</span>";
+
+            return $product;
+        });
+
+        if ($request->ajax()) {
+            return response()->json([
+                'products' => $products,
+                'totalProducts' => $totalProducts
+            ]);
+        }
+
+        return view("{$this->viewPath}.index", compact('products', 'sortBy', 'sortOrder', 'perPage', 'totalProducts', 'search'));
+    }
+
+
+    /**
      * Get request object
      *
      * @param string $action
