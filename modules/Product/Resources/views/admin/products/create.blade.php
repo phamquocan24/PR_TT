@@ -38,6 +38,7 @@
 @push('globals')
     @vite([
         'modules/Product/Resources/assets/admin/sass/main.scss',
+        'modules/Product/Resources/assets/admin/sass/options.scss',
         'modules/Product/Resources/assets/admin/js/create.js',
         'modules/Variation/Resources/assets/admin/sass/main.scss',
         'modules/Media/Resources/assets/admin/sass/main.scss',
