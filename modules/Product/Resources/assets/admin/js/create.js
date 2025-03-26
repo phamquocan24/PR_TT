@@ -4,6 +4,7 @@ import Errors from "@admin/js/Errors";
 import { generateSlug } from "@admin/js/functions";
 
 Vue.prototype.defaultCurrencySymbol = Ecommerce.defaultCurrencySymbol;
+Vue.prototype.route = route;
 
 new Vue({
     el: "#app",

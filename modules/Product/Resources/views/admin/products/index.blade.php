@@ -16,77 +16,61 @@
     @endslot
 
     @slot('tbody')
-    @foreach($products as $product)
-        <tr class="clickable-row">
-            <td>
-                <div class="checkbox">
-                    <input type="checkbox" class="select-row" name="product_ids[]" id="product_{{ $product->id }}" value="{{ $product->id }}">
-                    <label for="product_{{ $product->id }}"></label>
-                </div>
-            </td>
-            <td class="dt-type-numeric">{{ $product->id }}</td>
-            <td>
-                <!--
-                <div class="thumbnail-holder">
-                    <img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg" alt="thumbnail">
-                </div>
-                -->
-                {{ $product->slug }}
-            </td>
-            <td>
-                <a class="name" href="#">{{ $product->sku }}</a>
-            </td>
-            <td class="text-nowrap">
-                @if($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
-                    <span class="m-r-5">{{ number_format($product->special_price, 2) }}₫</span>
-                    <del class="text-red">{{ number_format($product->price, 2) }}₫</del>
-                @else
-                    {{ number_format($product->price, 2) }}₫
-                @endif
-            </td>
-            <td>
-                <span class="badge badge-primary {{ $product->in_stock ? 'bg-success' : 'bg-danger' }}">
-                    {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
-                </span>
-            </td>
-            <td>
-                <span class="badge badge-success {{ $product->is_active ? 'bg-primary' : 'bg-secondary' }}">
-                    {{ $product->is_active ? 'Active' : 'UnActive' }}
-                </span>
-            </td>
-            <td class="sorting_1">
-                <span data-toggle="tooltip" title="Mar 15, 2025">{{ $product->updated_at->diffForHumans() }}</span>
-            </td>
-        </tr>
-    @endforeach
-        <tr>
-            <td colspan="8" class="dt-empty">No data available in table</td>
-        </tr>
-
+        @if(!empty($products))
+            @foreach($products as $product)
+                <tr class="clickable-row">
+                    <td>
+                        <div class="checkbox">
+                            <input type="checkbox" class="select-row" name="ids[]" id="product-{{ $product->id }}" value="{{ $product->id }}">
+                            <label for="product-{{ $product->id }}"></label>
+                        </div>
+                    </td>
+                    <td class="dt-type-numeric">{{ $product->id }}</td>
+                    <td>
+                        <div class="thumbnail-holder">
+                            <img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg" alt="thumbnail">
+                        </div>
+                    </td>
+                    <td>
+                        <a class="name" href="#">{{ $product->name }}</a>
+                    </td>
+                    <td class="text-nowrap">
+                        @if($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
+                            <span class="m-r-5">{{ isset($product->special_price) ? product_price_formatted($product->special_price) : '' }}</span>
+                            <del class="text-red">{{ isset($product->price) ? product_price_formatted($product->price) : '' }}</del>
+                        @else
+                            <span>{{ product_price_formatted($product->price) }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        <span class="badge {{ $product->in_stock ? 'badge-primary' : 'badge-danger' }}">
+                            {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {{ $product->in_stock ? 'badge-success' : 'badge-danger' }}">
+                            {{ $product->is_active ? 'Active' : 'UnActive' }}
+                        </span>
+                    </td>
+                    <td class="sorting_1">
+                        <span data-toggle="tooltip" title="{{ $product->updated_at }}">{{ $product->updated_at->diffForHumans() }}</span>
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr>
+                <td colspan="8" class="dt-empty">No data available in table</td>
+            </tr>
+        @endif
     @endslot
 
-    @slot('ttotal')
-        <div >
-            <label class="dt-info" aria-live="polite" id="DataTables_Table_0_info" role="status">
-                {{ "Show $perPage of $totalProducts products" }}
-            </label>
-        </div>
+    @slot('tResult')
+        {{ (request()->get('page', 1) * $perPage) - $perPage + 1 }} - {{ request()->get('page', 1) * $perPage }} of {{ $totalProducts }} results entries
     @endslot
 
-    @slot('tchange')
-    <div class="row dt-layout-row">
-                <div class="dt-paging">
-                    <nav aria-label="pagination">
-                        <ul class="pagination">
-                            <li class="dt-paging-button page-item">
-                                {{ $products->appends(request()->query())->links('pagination::bootstrap-4') }}
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+    @slot('tPagination')
+        {!! $products->appends(request()->input())->links('admin::pagination.simple') !!}
     @endslot
-
 
 @endcomponent
 
@@ -111,6 +95,30 @@
 
 @push('scripts')
     <script type="module">
+        $(document).ready(function() {
+            $(document).on('click', '#delete-records', function (event) {
+                const recordsChecked = $('.index-table').find(".select-row:checked");
 
+                if (recordsChecked.length === 0) {
+                    return;
+                }
+
+                const ids = recordsChecked.toArray().reduce((ids, row) => {
+                    return ids.concat(+row.value);
+                }, []);
+                const confirmationModal = $("#confirmation-modal");
+                confirmationModal.modal('show');
+                confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(ids));
+                confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
+            });
+
+            @if (session()->has('message'))
+                @if(session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
+                    success("{{ session('message') }}")
+                @elseif(session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
+                    error("{{ session('message') }}")
+                @endif
+            @endif
+        });
     </script>
 @endpush

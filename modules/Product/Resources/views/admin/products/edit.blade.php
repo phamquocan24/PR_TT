@@ -78,7 +78,6 @@
         'modules/Product/Resources/assets/admin/js/edit.js',
         'modules/Attribute/Resources/assets/admin/sass/main.scss',
         'modules/Variation/Resources/assets/admin/sass/main.scss',
-        'modules/Option/Resources/assets/admin/sass/main.scss',
         'modules/Media/Resources/assets/admin/sass/main.scss',
         'modules/Media/Resources/assets/admin/js/main.js',
     ])

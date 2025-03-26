@@ -8,7 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Admin\Traits\HasCrudActions;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Modules\Product\Entities\Product;
 use Modules\Product\Entities\ProductVariant;
@@ -16,6 +16,7 @@ use Modules\Brand\Entities\Brand;
 use Modules\Category\Entities\Category;
 use Modules\Variation\Entities\Variation;
 class ProductController
+
 {
     /**
      * Model for the resource.
@@ -170,15 +171,26 @@ class ProductController
     }
     public function delete(Request $request)
     {
-        $productIds = $request->input('product_ids');
+        try {
+            $result = ['status' => 'success'];
+            $productIds = json_decode($request->input('ids'));
+            $deletedRows = Product::whereIn('id', $productIds)->delete();
 
-        if (empty($productIds)) {
-            return response()->json(['success' => false, 'message' => 'Không có sản phẩm nào được chọn!']);
+            if ($deletedRows > 0) {
+                DB::commit();
+                $result['message'] = "Xoá thành công bản ghi.";
+            } else {
+                DB::rollBack();
+                $result['message'] = "Không có bản ghi nào được xoá.";
+            }
+            return redirect()->route('admin.products.index')->with($result);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.products.index')->with([
+                'message' => $e->getMessage(),
+                'status' => 'failure',
+            ]);
         }
-
-        Product::whereIn('id', $productIds)->delete();
-
-        return response()->json(['success' => true, 'message' => 'Sản phẩm đã bị xóa thành công!']);
     }
 
     /**

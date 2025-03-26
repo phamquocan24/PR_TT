@@ -2,11 +2,10 @@ import "flatpickr";
 import "mousetrap";
 import "./Ecommerce";
 import "./jquery.keypressAction";
-import route from 'ziggy-js';
-
 
 import Admin from "./Admin";
 import Form from "./Form";
+import DataTable from "./DataTable";
 import {
     trans,
     keypressAction,
@@ -27,6 +26,7 @@ if (
 }
 
 window.form = new Form();
+window.DataTable = DataTable;
 
 window.trans = trans;
 window.keypressAction = keypressAction;
@@ -35,7 +35,6 @@ window.info = info;
 window.success = success;
 window.warning = warning;
 window.error = error;
-window.route = route;
 
 $.ajaxSetup({
     headers: {
