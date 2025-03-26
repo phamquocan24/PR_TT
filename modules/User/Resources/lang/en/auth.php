@@ -29,7 +29,7 @@ return [
     'already_have_an_account' => 'Already Have an Account?',
     'first_name' => 'First Name',
     'last_name' => 'Last Name',
-    'confirm_password' => 'Confirm Password',
+    // 'confirm_password' => 'Confirm Password',
     'i_agree_to_the' => 'I agree to the',
     'privacy_policy' => 'Privacy Policy',
     'reset_password' => 'Reset Password',

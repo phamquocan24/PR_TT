@@ -1,9 +1,9 @@
 @extends('admin::layout')
 
 @component('admin::components.page.header')
-    @slot('title', 'Quản lý người dùng')
+    @slot('title', 'Users')
 
-    <li class="active">Người dùng</li>
+    <li class="active">Users</li>
 @endcomponent
 
 @section('content')
@@ -24,7 +24,6 @@
                         <th>Vai trò</th>
                         <th>Đăng nhập cuối</th>
                         <th>Ngày tạo</th>
-                        <th data-sort>Hành động</th>
                     </tr>
                 @endslot
 
@@ -55,18 +54,6 @@
                                 @endif
                             </td>
                             <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    @if($user->id != auth()->id())
-                                        <button type="button" class="btn btn-sm btn-danger delete-row" data-id="{{ $user->id }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    @endif
-                                </div>
-                            </td>
                         </tr>
                     @endforeach
                 @endslot
@@ -74,22 +61,38 @@
                 @slot('tfoot')
                     <tr>
                         <td colspan="8">
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <button type="button" class="btn btn-danger btn-delete">
-                                        <i class="fas fa-trash"></i> Xóa đã chọn
-                                    </button>
-                                </div>
+
                                 <div>
                                     {{ $users->appends(request()->all())->links() }}
                                 </div>
-                            </div>
+
                         </td>
                     </tr>
                 @endslot
-            @endcomponent
-        </div>
+                @slot('ttotal')
+                <div>
+                    <label class="dt-info" aria-live="polite" id="DataTables_Table_0_info" role="status">
+                        {{ "Show $perPage of $totalUsers users" }}
+                    </label>
+                </div>
+            @endslot
+
+            @slot('tchange')
+                <div class="row dt-layout-row">
+                    <div class="dt-paging">
+                        <nav aria-label="pagination">
+                            <ul class="pagination">
+                                <li class="dt-paging-button page-item">
+                                    {{ $users->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            @endslot
+        @endcomponent
     </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -124,20 +127,14 @@
 
                 // Xác nhận trước khi xóa
                 if (confirm(`Bạn có chắc chắn muốn xóa ${checkboxes.length} người dùng đã chọn?`)) {
-                    // Bật loading state nếu cần
-                    deleteButton.disabled = true;
-                    deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xóa...';
-
-                    // Tạo CSRF token input
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
                     // Tạo form động để submit
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = '{{ route('admin.users.bulk-destroy') }}';
+                    form.action = '{{ route('admin.users.bulk_delete') }}';
                     form.style.display = 'none';
 
                     // Thêm CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = '_token';

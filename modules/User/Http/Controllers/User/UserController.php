@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Modules\User\Entities\User;
 use Modules\User\Enums\UserRole;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -21,6 +23,14 @@ class UserController extends Controller
         $sortOrder = $request->get('sort', 'asc');
         $perPage = $request->input('per_page', 10);
         $search = $request->input('search', '');
+
+        // Danh sách cột có thể sắp xếp
+        $sortableColumns = ['id', 'first_name', 'last_name', 'email', 'role', 'last_login', 'created_at'];
+
+        // Kiểm tra nếu cột không hợp lệ, đặt lại thành 'id'
+        if (!in_array($sortBy, $sortableColumns)) {
+            $sortBy = 'id';
+        }
 
         // Tạo query
         $query = User::query();
@@ -43,10 +53,10 @@ class UserController extends Controller
         // Thêm thông tin cho view
         $roles = [
             UserRole::ADMINISTRATOR => 'Admin',
-            UserRole::MEMBER => 'Thành viên'
+            UserRole::MEMBER => 'Member'
         ];
 
-        return view('user::index', compact('users', 'sortBy', 'sortOrder', 'perPage', 'search', 'totalUsers', 'roles'));
+        return view('user::admin.users.index', compact('users', 'sortBy', 'sortOrder', 'perPage', 'search', 'totalUsers', 'roles'));
     }
 
     /**
@@ -56,10 +66,10 @@ class UserController extends Controller
     {
         $roles = [
             UserRole::ADMINISTRATOR => 'Admin',
-            UserRole::MEMBER => 'Thành viên'
+            UserRole::MEMBER => 'Member'
         ];
 
-        return view('user::create', compact('roles'));
+        return view('user::admin.users.create', compact('roles'));
     }
 
     /**
@@ -79,8 +89,9 @@ class UserController extends Controller
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
             'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role' => $validated['role']
+            'password' => Hash::make($validated['password']),
+            'role' => $validated['role'],
+            'email_verified_at' => now(),
         ]);
 
         return redirect()->route('admin.users.index')
@@ -94,7 +105,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return view('user::show', compact('user'));
+        return view('user::admin.users.show', compact('user'));
     }
 
     /**
@@ -106,10 +117,10 @@ class UserController extends Controller
 
         $roles = [
             UserRole::ADMINISTRATOR => 'Admin',
-            UserRole::MEMBER => 'Thành viên'
+            UserRole::MEMBER => 'Member'
         ];
 
-        return view('user::edit', compact('user', 'roles'));
+        return view('user::admin.users.edit', compact('user', 'roles'));
     }
 
     /**
@@ -136,7 +147,7 @@ class UserController extends Controller
 
         // Chỉ cập nhật mật khẩu nếu được cung cấp
         if (!empty($validated['password'])) {
-            $userData['password'] = bcrypt($validated['password']);
+            $userData['password'] = Hash::make($validated['password']);
         }
 
         $user->update($userData);
@@ -152,6 +163,15 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
+
+            // Không cho phép xóa chính mình
+            if (auth()->id() == $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không thể xóa tài khoản của chính mình'
+                ], 403);
+            }
+
             $user->delete();
 
             return response()->json([
@@ -161,7 +181,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi xóa người dùng'
+                'message' => 'Đã xảy ra lỗi khi xóa người dùng: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -177,7 +197,16 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Không có người dùng nào được chọn để xóa.');
         }
 
+        // Không cho phép xóa chính mình
+        if (in_array(auth()->id(), $userIds)) {
+            return redirect()->back()->with('error', 'Bạn không thể xóa tài khoản của chính mình.');
+        }
+
         try {
+            // Ensure the user IDs are integers
+            $userIds = array_map('intval', $userIds);
+
+            // Delete users
             User::whereIn('id', $userIds)->delete();
 
             return redirect()->route('admin.users.index')
