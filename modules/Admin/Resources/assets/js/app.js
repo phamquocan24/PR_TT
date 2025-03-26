@@ -3,6 +3,7 @@ import "mousetrap";
 import "./Ecommerce";
 import "./jquery.keypressAction";
 
+
 import Admin from "./Admin";
 import Form from "./Form";
 import DataTable from "./DataTable";
@@ -42,3 +43,5 @@ $.ajaxSetup({
         "X-CSRF-TOKEN": Ecommerce.csrfToken,
     },
 });
+
+
