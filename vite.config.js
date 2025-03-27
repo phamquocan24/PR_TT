@@ -20,6 +20,7 @@ export default defineConfig(async ({ command, mode }) => {
                     "modules/User/Resources/assets/sass/pages/auth/main.scss",
                     "modules/User/Resources/assets/js/pages/auth/main.js",
 
+
                     // identify assets through pattern matching
                     ...(await glob(
                         [

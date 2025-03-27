@@ -11,7 +11,6 @@ use Modules\User\Enums\UserRole;
 use Carbon\Carbon;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
-
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
@@ -20,6 +19,7 @@ class User extends Authenticatable implements JWTSubject
         'first_name',
         'last_name',
         'email',
+        'password', // Thêm password vào fillable
         'email_verified_at',
         'role',
         'last_login',
@@ -35,6 +35,16 @@ class User extends Authenticatable implements JWTSubject
         'last_login' => 'datetime',
     ];
 
+    /**
+     * Get the user's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
     public function isAdmin()
     {
         return $this['role'] == UserRole::ADMINISTRATOR;
@@ -44,6 +54,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this['role'] == UserRole::MEMBER;
     }
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

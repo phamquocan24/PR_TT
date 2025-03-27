@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('role')->unsigned()->comment('1:Admin　1:Member');
             $table->datetime('last_login')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

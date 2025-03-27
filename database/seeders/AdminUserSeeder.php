@@ -11,10 +11,11 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         User::create([
-            'name' => 'Admin',
+            'first_name' => 'Admin',
+            'last_name' => 'User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password123'),
-            // Các trường khác nếu cần
+            'role' => 1, // 1 là Admin theo comment trong migration
         ]);
     }
 }

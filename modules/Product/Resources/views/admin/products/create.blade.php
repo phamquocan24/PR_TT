@@ -41,6 +41,10 @@
         'modules/Product/Resources/assets/admin/sass/options.scss',
         'modules/Product/Resources/assets/admin/js/create.js',
         'modules/Variation/Resources/assets/admin/sass/main.scss',
+<<<<<<< HEAD
+=======
+        'modules/Product/Resources/assets/admin/sass/options.scss',
+>>>>>>> 1c3d47c (20250327)
         'modules/Media/Resources/assets/admin/sass/main.scss',
         'modules/Media/Resources/assets/admin/js/main.js',
     ])

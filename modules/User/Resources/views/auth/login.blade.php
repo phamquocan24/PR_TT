@@ -256,7 +256,7 @@
                             type="submit"
                             class="btn btn-primary"
                         >
-                            {{ trans('user::auth.sign_in') }}
+                        <a href="{{ route('admin.dashboard.index') }}" class=""> {{ trans('user::auth.sign_in') }}</a>
                         </button>
                     </form>
                 </div>

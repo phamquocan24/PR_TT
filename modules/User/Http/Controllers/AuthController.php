@@ -10,6 +10,7 @@ use Modules\User\Entities\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Modules\User\Enums\UserRole;
 
 class AuthController extends Controller
 {
@@ -28,13 +29,61 @@ class AuthController extends Controller
 
     public function postLogin(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        \Log::info('Đang thử đăng nhập với:', $request->only('email'));
 
-        if (auth('api')->attempt($credentials)) {
-            return redirect()->intended(route('admin.users.index'));
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            \Log::info('Validation failed:', $validator->errors()->toArray());
+            return back()->withErrors($validator)->withInput();
         }
 
-        return back()->withErrors(['email' => 'Thông tin đăng nhập không hợp lệ']);
+        $credentials = $request->only('email', 'password');
+
+        try {
+            \Log::info('Đang thử JWT auth với credentials');
+            if (!auth('api')->attempt($credentials)) {
+                \Log::info('JWT auth thất bại');
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Thông tin đăng nhập không hợp lệ']);
+            }
+
+            \Log::info('JWT auth thành công');
+            // Phần còn lại của code...
+        } catch (\Exception $e) {
+            \Log::error('Exception: ' . $e->getMessage());
+
+            // Cập nhật thời gian đăng nhập cuối
+            $user = auth('api')->user();
+            $user->last_login = now();
+            $user->save();
+
+            // Nếu yêu cầu là AJAX hoặc mong đợi JSON
+            if ($request->expectsJson()) {
+                $token = auth('api')->attempt($credentials);
+                return response()->json([
+                    'token' => $token,
+                    'user' => $user
+                ]);
+            }
+
+            // Chuyển hướng đến trang dashboard
+            return route('admin.dashboard.index');
+        } catch (JWTException $e) {
+            \Log::error('JWT Error: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Không thể tạo token'], 500);
+            }
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.']);
+        }
     }
 
     public function getLogout(Request $request)
@@ -77,8 +126,26 @@ class AuthController extends Controller
 
     public function postReset(Request $request)
     {
-        // Logic xử lý reset password
-        return redirect()->route('admin.login')->with('success', 'Mật khẩu đã được đặt lại');
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:6|confirmed',
+            'token' => 'required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email không tồn tại'])->withInput();
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('login')->with('success', 'Mật khẩu đã được đặt lại thành công');
     }
 
     // API auth methods
@@ -99,13 +166,19 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        // Cập nhật thời gian đăng nhập cuối
+        $user = auth('api')->user();
+        $user->last_login = now();
+        $user->save();
+
         return $this->respondWithToken($token);
     }
 
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -115,9 +188,11 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->name,
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => UserRole::MEMBER,
         ]);
 
         $token = auth('api')->login($user);
@@ -137,7 +212,7 @@ class AuthController extends Controller
             $token = JWTAuth::parseToken()->refresh();
             return $this->respondWithToken($token);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Không thể làm mới token'], 401);
+            return response()->json(['error' => 'Không thể làm mới token: ' . $e->getMessage()], 401);
         }
     }
 
