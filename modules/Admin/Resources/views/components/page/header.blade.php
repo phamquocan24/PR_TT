@@ -20,5 +20,4 @@
         </li>
 
         {{ $slot }}
-    </ol>
-@endsection
+    </ol>@endsection

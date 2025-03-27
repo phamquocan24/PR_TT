@@ -17,6 +17,8 @@ export default defineConfig(async ({ command, mode }) => {
                     "modules/Admin/Resources/assets/sass/dashboard.scss",
                     "modules/Admin/Resources/assets/js/dashboard.js",
                     "modules/Product/Resources/assets/admin/sass/options.scss",
+                    "modules/User/Resources/assets/sass/pages/auth/main.scss",
+                    "modules/User/Resources/assets/js/pages/auth/main.js",
 
                     // identify assets through pattern matching
                     ...(await glob(

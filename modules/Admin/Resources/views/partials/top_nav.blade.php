@@ -36,7 +36,7 @@
                 </li>
 
                 <li>
-                    <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" style="display: none;">
+                    <form id="logout-form" action="{{ route('admin.logout.post') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

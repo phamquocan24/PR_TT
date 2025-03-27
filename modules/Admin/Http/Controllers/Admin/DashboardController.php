@@ -14,6 +14,6 @@ class DashboardController
      */
     public function index()
     {
-        return view('admin::dashboard.index');
+        return response()->view('admin::dashboard.index');
     }
 }
