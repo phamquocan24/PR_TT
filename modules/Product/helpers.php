@@ -7,3 +7,4 @@ if (!function_exists('product_price_formatted')) {
         return number_format($price, 0, ',', '.') . 'đ';
     }
 }
+

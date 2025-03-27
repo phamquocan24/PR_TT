@@ -17,6 +17,8 @@ use Modules\Brand\Entities\Brand;
 use Modules\Category\Entities\Category;
 use Modules\Variation\Entities\Variation;
 use Modules\Product\Services\ProductService;
+
+use Modules\Product\Http\Request\StoreProductRequest;
 class ProductController
 
 {
@@ -121,14 +123,10 @@ class ProductController
      *
      * @return Response|JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         // Xác thực dữ liệu đầu vào
-        $validated = $request->validate([
-            'name' => 'required|string|max:191',
-            'brand_id' => 'required|exists:brands,id',
-            'variants' => 'nullable|array', // Danh sách biến thể (nếu có)
-        ]);
+        $validatedData = $request->validated();
 
         // Gọi ProductService để format dữ liệu
         $structuredData = ProductService::formatProductVariants($request->all());
@@ -141,8 +139,8 @@ class ProductController
 
             // Lưu sản phẩm cha (parent product)
             $product = Product::create([
-                'name' => $validated['name'] ?? $request->name,
-                'brand_id' => $validated['brand_id'],
+                'name' => $validatedData['name'] ?? $request->name,
+                'brand_id' =>$validatedData['brand_id'],
                 'sku' => null, // Sản phẩm cha không có SKU riêng
                 'price' => $parentPrice, // Lấy giá của biến thể mặc định nếu có
                 'is_active' => 1,
@@ -189,7 +187,8 @@ class ProductController
      */
     public function edit($id)
     {
-        return view("{$this->viewPath}.edit", []);
+        $product = Product::findOrFail($id);
+        return view("{$this->viewPath}.edit", compact('product'));
     }
 
 
@@ -198,10 +197,49 @@ class ProductController
      *
      * @param int $id
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:191',
+            'brand_id' => 'required|exists:brands,id',
+            'variants' => 'nullable|array',
+        ]);
 
+        // Gọi service để xử lý dữ liệu
+        $structuredData = ProductService::formatProductVariantsForUpdate($request->all());
+        //dd($structuredData);
+
+        // Tìm sản phẩm cha
+        $product = Product::findOrFail($id);
+
+        if (!empty($structuredData['variants'])) {
+            // Nếu có biến thể, cập nhật biến thể thay vì sản phẩm chính
+            foreach ($structuredData['variants'] as $variant) {
+                $variantModel = ProductVariant::find($variant['id']);
+                if ($variantModel) {
+                    $variantModel->update($variant);
+                } else {
+                    ProductVariant::create(array_merge($variant, ['product_id' => $product->id]));
+                }
+            }
+
+            // Cập nhật giá sản phẩm cha theo biến thể mặc định
+            $defaultVariant = collect($structuredData['variants'])->firstWhere('is_default', 1);
+            $product->update(['price' => $defaultVariant['price'] ?? $product->price]);
+        } else {
+            // Nếu không có biến thể, cập nhật sản phẩm chính
+            $product->update([
+                'name' => $structuredData['name'],
+                'brand_id' => $structuredData['brand_id'],
+                'sku' => $structuredData['sku'],
+                'price' => $structuredData['price'],
+                'is_active' => $structuredData['is_active'] ?? $product->is_active,
+            ]);
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Sản phẩm đã được cập nhật!');
     }
+
     public function delete(Request $request)
     {
         try {

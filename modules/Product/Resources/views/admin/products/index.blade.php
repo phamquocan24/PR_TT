@@ -34,7 +34,7 @@
                         </div>
                     </td>
                     <td>
-                        <a class="name" href="#">{{ $product->name }}</a>
+                        <a class="name" href="{{ route('admin.products.edit', $product->id) }}">{{ $product->name }}</a>
                     </td>
                     <td class="text-nowrap">
                         @if ($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
