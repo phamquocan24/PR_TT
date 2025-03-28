@@ -7,6 +7,8 @@
         $newSort = ($sort === 'asc') ? 'desc' : 'asc'; // Chuyển đổi trạng thái sắp xếp
     @endphp
 
+
+
     {{-- Cột ID --}}
     <th data-dt-column="1" class="dt-orderable-asc dt-orderable-desc" style="width: 6%;">
         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'id', 'sort' => $newSort]) }}" class="text-decoration-none">

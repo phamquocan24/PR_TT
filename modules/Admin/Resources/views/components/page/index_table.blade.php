@@ -40,6 +40,7 @@
     @endpush
 
     @push('scripts')
+
         <script type="module">
             @if (isset($buttons) && in_array('create', $buttons))
                 keypressAction([
@@ -65,3 +66,4 @@
         </script>
     @endpush
 @endisset
+

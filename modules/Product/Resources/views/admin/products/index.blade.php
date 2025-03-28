@@ -39,7 +39,7 @@
                     <td class="text-nowrap">
                         @if ($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
                             <span
-                                class="m-r-5">{{ isset($product->special_price) ? product_price_formatted($product->special_price) : '' }}</span>
+                                class="m-r-5">{{ isset($product->selling_price) ? product_price_formatted($product->selling_price) : '' }}</span>
                             <del
                                 class="text-red">{{ isset($product->price) ? product_price_formatted($product->price) : '' }}</del>
                         @else
@@ -104,32 +104,51 @@
 @endif
 
 @push('scripts')
-    <script type="module">
-        $(document).ready(function() {
-            $(document).on('click', '#delete-records', function(event) {
-                const recordsChecked = $('.index-table').find(".select-row:checked");
-
-                if (recordsChecked.length === 0) {
-                    return;
-                }
-
-                const ids = recordsChecked.toArray().reduce((ids, row) => {
-                    return ids.concat(+row.value);
-                }, []);
-                const confirmationModal = $("#confirmation-modal");
-                confirmationModal.modal('show');
-                confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(
-                    ids));
-                confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
-            });
-
-            @if (session()->has('message'))
-                @if (session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
-                    success("{{ session('message') }}")
-                @elseif (session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
-                    error("{{ session('message') }}")
-                @endif
-            @endif
+<script type="module">
+    $(document).ready(function() {
+        // Handle the "select all" checkbox
+        $(document).on('change', '.select-all', function() {
+            const isChecked = $(this).is(':checked');
+            $('.index-table').find(".select-row").prop('checked', isChecked);
         });
-    </script>
+
+        $(document).on('click', '#delete-records', function(event) {
+            const recordsChecked = $('.index-table').find(".select-row:checked");
+            const recordsCheckedAll = $('.index-table').find(".select-all:checked");
+
+            let ids = [];
+            let idsAll = [];
+
+            if (recordsCheckedAll.length > 0) {
+                // If "select all" is checked, get all record IDs
+                idsAll = $('.index-table').find(".select-row").toArray()
+                    .map(row => parseInt(row.value))
+                    .filter(id => !isNaN(id)); // Filter out invalid values
+            } else {
+                // Otherwise, get only the checked record IDs
+                ids = recordsChecked.toArray()
+                    .map(row => parseInt(row.value))
+                    .filter(id => !isNaN(id)); // Filter out invalid values
+            }
+
+            if (ids.length === 0 && idsAll.length === 0) {
+                return;
+            }
+
+            const confirmationModal = $("#confirmation-modal");
+            confirmationModal.modal('show');
+            confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(ids));
+            confirmationModal.find("form").find('input[name="idsAll"][type="hidden"]').val(JSON.stringify(idsAll));
+            confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
+        });
+
+        @if (session()->has('message'))
+            @if (session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
+                success("{{ session('message') }}")
+            @elseif (session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
+                error("{{ session('message') }}")
+            @endif
+        @endif
+    });
+</script>
 @endpush
