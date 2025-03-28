@@ -16,75 +16,68 @@
     @endslot
 
     @slot('tbody')
-        @foreach ($products as $product)
-            <tr class="clickable-row">
-                <td>
-                    <div class="checkbox">
-                        <input type="checkbox" class="select-row" value="6" id="Gj1En6IIXHIkeGwu">
-                        <label for="Gj1En6IIXHIkeGwu"></label>
-                    </div>
-                </td>
-                <td class="dt-type-numeric">{{ $product->id }}</td>
-                <td>
-                    <!--
-                        <div class="thumbnail-holder">
-                            <img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg" alt="thumbnail">
+        @if (!empty($products))
+            @foreach ($products as $product)
+                <tr class="clickable-row">
+                    <td>
+                        <div class="checkbox">
+                            <input type="checkbox" class="select-row" name="ids[]" id="product-{{ $product->id }}"
+                                value="{{ $product->id }}">
+                            <label for="product-{{ $product->id }}"></label>
                         </div>
-                        -->
-                    {{ $product->slug }}
-                </td>
-                <td>
-                    <a class="name" href="#">{{ $product->sku }}</a>
-                </td>
-                <td class="text-nowrap">
-                    @if ($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
-                        <span class="m-r-5">{{ number_format($product->special_price, 2) }}₫</span>
-                        <del class="text-red">{{ number_format($product->price, 2) }}₫</del>
-                    @else
-                        {{ number_format($product->price, 2) }}₫
-                    @endif
-                </td>
-                <td>
-                    <span class="badge badge-primary {{ $product->in_stock ? 'bg-success' : 'bg-danger' }}">
-                        {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
-                    </span>
-                </td>
-                <td>
-                    <span class="badge badge-success {{ $product->is_active ? 'bg-primary' : 'bg-secondary' }}">
-                        {{ $product->is_active ? 'Active' : 'UnActive' }}
-                    </span>
-                </td>
-                <td class="sorting_1">
-                    <span data-toggle="tooltip" title="Mar 15, 2025">{{ $product->updated_at->diffForHumans() }}</span>
-                </td>
+                    </td>
+                    <td class="dt-type-numeric">{{ $product->id }}</td>
+                    <td>
+                        <div class="thumbnail-holder">
+                            <img src="https://demo.fleetcart.envaysoft.com/storage/media/YXFIHEgHF4JOGhBdtehoqGzES93CfS2gaxRpIt1U.jpeg"
+                                alt="thumbnail">
+                        </div>
+                    </td>
+                    <td>
+                        <a class="name" href="{{ route('admin.products.edit', $product->id) }}">{{ $product->name }}</a>
+                    </td>
+                    <td class="text-nowrap">
+                        @if ($product->special_price && now()->between($product->special_price_start, $product->special_price_end))
+                            <span
+                                class="m-r-5">{{ isset($product->selling_price) ? product_price_formatted($product->selling_price) : '' }}</span>
+                            <del
+                                class="text-red">{{ isset($product->price) ? product_price_formatted($product->price) : '' }}</del>
+                        @else
+                            <span>{{ product_price_formatted($product->price) }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        <span class="badge {{ $product->in_stock ? 'badge-primary' : 'badge-danger' }}">
+                            {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {{ $product->in_stock ? 'badge-success' : 'badge-danger' }}">
+                            {{ $product->is_active ? 'Active' : 'UnActive' }}
+                        </span>
+                    </td>
+                    <td class="sorting_1">
+                        <span data-toggle="tooltip"
+                            title="{{ $product->updated_at }}">{{ $product->updated_at->diffForHumans() }}</span>
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr>
+                <td colspan="8" class="dt-empty">No data available in table</td>
             </tr>
-        @endforeach
-        <tr>
-            <td colspan="8" class="dt-empty">No data available in table</td>
-        </tr>
+        @endif
     @endslot
 
-    @slot('ttotal')
-        <div>
-            <label class="dt-info" aria-live="polite" id="DataTables_Table_0_info" role="status">
-                {{ "Show $perPage of $totalProducts products" }}
-            </label>
-        </div>
+    @slot('tResult')
+        {{ request()->get('page', 1) * $perPage - $perPage + 1 }} - {{ request()->get('page', 1) * $perPage }} of
+        {{ $totalProducts }} results entries
     @endslot
 
-    @slot('tchange')
-        <div class="row dt-layout-row">
-            <div class="dt-paging">
-                <nav aria-label="pagination">
-                    <ul class="pagination">
-                        <li class="dt-paging-button page-item">
-                            {{ $products->appends(request()->query())->links('pagination::bootstrap-4') }}
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+    @slot('tPagination')
+        {!! $products->appends(request()->input())->links('admin::pagination.simple') !!}
     @endslot
+
 @endcomponent
 
 @if (session()->has('exit_flash'))
@@ -111,5 +104,51 @@
 @endif
 
 @push('scripts')
-    <script type="module"></script>
+<script type="module">
+    $(document).ready(function() {
+        // Handle the "select all" checkbox
+        $(document).on('change', '.select-all', function() {
+            const isChecked = $(this).is(':checked');
+            $('.index-table').find(".select-row").prop('checked', isChecked);
+        });
+
+        $(document).on('click', '#delete-records', function(event) {
+            const recordsChecked = $('.index-table').find(".select-row:checked");
+            const recordsCheckedAll = $('.index-table').find(".select-all:checked");
+
+            let ids = [];
+            let idsAll = [];
+
+            if (recordsCheckedAll.length > 0) {
+                // If "select all" is checked, get all record IDs
+                idsAll = $('.index-table').find(".select-row").toArray()
+                    .map(row => parseInt(row.value))
+                    .filter(id => !isNaN(id)); // Filter out invalid values
+            } else {
+                // Otherwise, get only the checked record IDs
+                ids = recordsChecked.toArray()
+                    .map(row => parseInt(row.value))
+                    .filter(id => !isNaN(id)); // Filter out invalid values
+            }
+
+            if (ids.length === 0 && idsAll.length === 0) {
+                return;
+            }
+
+            const confirmationModal = $("#confirmation-modal");
+            confirmationModal.modal('show');
+            confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(ids));
+            confirmationModal.find("form").find('input[name="idsAll"][type="hidden"]').val(JSON.stringify(idsAll));
+            confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
+        });
+
+        @if (session()->has('message'))
+            @if (session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
+                success("{{ session('message') }}")
+            @elseif (session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
+                error("{{ session('message') }}")
+            @endif
+        @endif
+    });
+</script>
 @endpush

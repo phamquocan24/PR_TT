@@ -15,11 +15,11 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('brand_id')->unsigned()->nullable();
             $table->string('name');
-            $table->longText('description');
+            $table->longText('description')->nullable();
             $table->text('short_description')->nullable();
             $table->decimal('price', 18, 4)->unsigned();
             $table->decimal('special_price', 18, 4)->unsigned()->nullable();
-            $table->integer('special_price_type')->unsigned()->comment('1:Fixed　2:Percent');
+            $table->integer('special_price_type')->unsigned()->default(1)->comment('1:Fixed 2:Percent');
             $table->date('special_price_start')->nullable();
             $table->date('special_price_end')->nullable();
             $table->decimal('selling_price', 18, 4)->unsigned()->nullable()->comment('percent = price - (special_price / 100) * price, fixed = price - special_price');
