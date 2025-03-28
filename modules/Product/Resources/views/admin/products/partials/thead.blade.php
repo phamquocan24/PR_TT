@@ -26,7 +26,7 @@
     {{-- Cột Tên --}}
     <th style="width: 32%;" class="dt-orderable-asc dt-orderable-desc" data-dt-column="1">
         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort' => $newSort]) }}" class="text-decoration-none">
-            <span class="dt-column-title">{{ trans('product::products.table.slug') }}</span>
+            <span class="dt-column-title">{{ trans('product::products.table.name') }}</span>
             <span class="dt-column-order
                 @if($sortBy === 'name') {{ $sort === 'asc' ? 'dt-ordering-asc' : 'dt-ordering-desc' }} @endif"
                 role="button">
