@@ -150,5 +150,122 @@
             @endif
         @endif
     });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('.dt-search input[type="search"]');
+            const tableRows = document.querySelectorAll('tbody tr');
+            const noResultsRow = createNoResultsRow();
+
+            // Thêm hàng thông báo không có kết quả vào cuối bảng
+            function createNoResultsRow() {
+                const row = document.createElement('tr');
+                row.classList.add('no-results');
+                row.style.display = 'none';
+                const cell = document.createElement('td');
+                cell.setAttribute('colspan', tableRows[0].children.length);
+                cell.classList.add('text-center', 'text-muted', 'py-3');
+                cell.textContent = 'Không tìm thấy kết quả phù hợp';
+                row.appendChild(cell);
+                tableRows[0].closest('tbody').appendChild(row);
+                return row;
+            }
+
+            // Hàm tìm kiếm nâng cao
+            searchInput.addEventListener('keyup', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                let visibleRowCount = 0;
+
+                tableRows.forEach(row => {
+                    // Lấy tất cả các ô trong dòng
+                    const cells = row.querySelectorAll('td');
+
+                    // Kiểm tra từng ô để tìm kiếm
+                    const match = Array.from(cells).some(cell => {
+                        // Loại bỏ các thẻ HTML để tìm kiếm
+                        const cellText = cell.textContent.replace(/<[^>]*>/g, '').toLowerCase().trim();
+
+                        // Tìm kiếm chính xác và gần đúng
+                        return cellText.includes(searchTerm) ||
+                               cellText.split(' ').some(word => word.startsWith(searchTerm));
+                    });
+
+                    // Hiển thị/ẩn dòng
+                    if (match) {
+                        row.style.display = '';
+                        visibleRowCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // Hiển thị/ẩn dòng thông báo không có kết quả
+                noResultsRow.style.display = visibleRowCount > 0 ? 'none' : '';
+            });
+
+            // Hàm debounce để tránh gọi quá nhiều request
+            function debounce(func, delay) {
+                let debounceTimer;
+                return function() {
+                    const context = this;
+                    const args = arguments;
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(context, args), delay);
+                }
+            }
+
+            // Xử lý tìm kiếm Ajax
+            searchInput.addEventListener('input', debounce(function() {
+                const searchTerm = this.value.trim();
+
+                if (searchTerm.length < 2) return; // Tránh search quá ngắn
+
+                fetch(`{{ route('admin.products.search') }}?search=${encodeURIComponent(searchTerm)}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateTableWithSearchResults(data.products);
+                })
+                .catch(error => {
+                    console.error('Lỗi tìm kiếm:', error);
+                });
+            }, 300));
+
+            // Hàm cập nhật bảng kết quả tìm kiếm
+            function updateTableWithSearchResults(products) {
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = ''; // Xóa các dòng cũ
+
+                if (products.data.length === 0) {
+                    noResultsRow.style.display = '';
+                    return;
+                }
+
+                products.data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="checkbox">
+                                <input type="checkbox" class="select-row" value="${product.id}" id="product-${product.id}">
+                                <label for="product-${product.id}"></label>
+                            </div>
+                        </td>
+                        <td>${product.id}</td>
+                        <td>
+                            <img src="${product.thumbnail}" alt="${product.name}" class="img-thumbnail" style="max-width: 100px;">
+                        </td>
+                        <td>${product.name}</td>
+                        <td>${product.formatted_price}</td>
+                        <td>${product.in_stock}</td>
+                        <td>${product.status}</td>
+                        <td>${product.formatted_updated_at}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        });
+    </script>
 @endpush
