@@ -53,26 +53,28 @@ class AuthController extends Controller
             }
 
             \Log::info('JWT auth thành công');
-            // Phần còn lại của code...
-        } catch (\Exception $e) {
-            \Log::error('Exception: ' . $e->getMessage());
 
             // Cập nhật thời gian đăng nhập cuối
             $user = auth('api')->user();
             $user->last_login = now();
             $user->save();
+            // Lấy token JWT và lưu vào session
+            $token = JWTAuth::fromUser($user);
+            session(['jwt_token' => $token]);
+
+            \Log::info('JWT token đã được lưu vào session');
 
             // Nếu yêu cầu là AJAX hoặc mong đợi JSON
             if ($request->expectsJson()) {
-                $token = auth('api')->attempt($credentials);
+                $token = JWTAuth::fromUser($user);
                 return response()->json([
                     'token' => $token,
                     'user' => $user
                 ]);
             }
 
-            // Chuyển hướng đến trang dashboard
-            return route('admin.dashboard.index');
+            return view('admin::dashboard.index');
+
         } catch (JWTException $e) {
             \Log::error('JWT Error: ' . $e->getMessage());
 
@@ -83,6 +85,12 @@ class AuthController extends Controller
             return back()
                 ->withInput($request->only('email'))
                 ->withErrors(['email' => 'Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.']);
+        } catch (\Exception $e) {
+            \Log::error('Exception: ' . $e->getMessage());
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Có lỗi không xác định: ' . $e->getMessage()]);
         }
     }
 

@@ -15,7 +15,7 @@ Route::get('password/reset', [AuthController::class, 'getReset'])->name('passwor
 Route::post('password/reset', [AuthController::class, 'postReset'])->name('password.reset.post');
 
 // Routes yêu cầu đăng nhập
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['web'])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
 
@@ -30,7 +30,7 @@ Route::middleware('auth:api')->group(function () {
         'destroy' => 'admin.users.destroy',
     ]);
 
-    Route::post('users/bulk-delete', [UserController::class, 'bulkDestroy'])->name('users.bulk_delete');
+    Route::post('users/bulk-delete', [UserController::class, 'bulkDestroy'])->name('admin.users.bulk_delete');
 
     // User Profile
     Route::get('profile', [UserController::class, 'profile'])->name('admin.profile');
