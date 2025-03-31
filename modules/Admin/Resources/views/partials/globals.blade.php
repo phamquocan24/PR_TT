@@ -22,3 +22,5 @@
 </script>
 
 @stack('globals')
+
+@routes

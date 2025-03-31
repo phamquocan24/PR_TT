@@ -57,7 +57,6 @@
         @include('admin::partials.footer')
         @include('admin::partials.confirmation_modal')
 
-        @routes
         @stack('scripts')
     </body>
 </html>

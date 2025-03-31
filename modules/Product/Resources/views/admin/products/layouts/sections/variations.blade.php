@@ -126,11 +126,13 @@
                                                         {{ trans('product::products.form.variations.variation_types.please_select') }}
                                                     </option>
 
-                                                    @foreach ($variations as $variationItem)
-                                                        <option value="{{ $variationItem->type }}">
-                                                            {{ $variationItem->type }}
-                                                        </option>
-                                                    @endforeach
+                                                    <option value="text">
+                                                        {{ trans('product::products.form.variations.variation_types.text') }}
+                                                    </option>
+
+                                                    <option value="color">
+                                                        {{ trans('product::products.form.variations.variation_types.color') }}
+                                                    </option>
                                                 </select>
 
                                                 <span
