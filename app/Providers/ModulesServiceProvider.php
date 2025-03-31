@@ -146,6 +146,7 @@ class ModulesServiceProvider extends ServiceProvider
     {
         $routeAttributes = [
             'prefix' => 'admin', // Định nghĩa đường dẫn prefix admin
+            'name' => 'admin.',
             'middleware' => ['web'], // Thêm middleware nếu cần
         ];
 

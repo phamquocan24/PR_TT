@@ -1,5 +1,4 @@
 import Coloris from "@melloware/coloris";
-import route from 'ziggy-js';
 
 export default {
     data() {
