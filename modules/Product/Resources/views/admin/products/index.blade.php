@@ -106,166 +106,131 @@
 @push('scripts')
 <script type="module">
     $(document).ready(function() {
-        // Handle the "select all" checkbox
-        $(document).on('change', '.select-all', function() {
-            const isChecked = $(this).is(':checked');
-            $('.index-table').find(".select-row").prop('checked', isChecked);
-        });
-
-        $(document).on('click', '#delete-records', function(event) {
-            const recordsChecked = $('.index-table').find(".select-row:checked");
-            const recordsCheckedAll = $('.index-table').find(".select-all:checked");
-
-            let ids = [];
-            let idsAll = [];
-
-            if (recordsCheckedAll.length > 0) {
-                // If "select all" is checked, get all record IDs
-                idsAll = $('.index-table').find(".select-row").toArray()
-                    .map(row => parseInt(row.value))
-                    .filter(id => !isNaN(id)); // Filter out invalid values
-            } else {
-                // Otherwise, get only the checked record IDs
-                ids = recordsChecked.toArray()
-                    .map(row => parseInt(row.value))
-                    .filter(id => !isNaN(id)); // Filter out invalid values
-            }
-
-            if (ids.length === 0 && idsAll.length === 0) {
-                return;
-            }
-
-            const confirmationModal = $("#confirmation-modal");
-            confirmationModal.modal('show');
-            confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(ids));
-            confirmationModal.find("form").find('input[name="idsAll"][type="hidden"]').val(JSON.stringify(idsAll));
-            confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
-        });
-
-        @if (session()->has('message'))
-            @if (session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
-                success("{{ session('message') }}")
-            @elseif (session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
-                error("{{ session('message') }}")
-            @endif
-        @endif
+    // Xử lý checkbox "chọn tất cả"
+    $(document).on('change', '.select-all', function() {
+        const isChecked = $(this).is(':checked');
+        $('.index-table').find(".select-row").prop('checked', isChecked);
     });
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.querySelector('.dt-search input[type="search"]');
-            const tableRows = document.querySelectorAll('tbody tr');
-            const noResultsRow = createNoResultsRow();
 
-            // Thêm hàng thông báo không có kết quả vào cuối bảng
-            function createNoResultsRow() {
-                const row = document.createElement('tr');
-                row.classList.add('no-results');
-                row.style.display = 'none';
-                const cell = document.createElement('td');
-                cell.setAttribute('colspan', tableRows[0].children.length);
-                cell.classList.add('text-center', 'text-muted', 'py-3');
-                cell.textContent = 'Không tìm thấy kết quả phù hợp';
-                row.appendChild(cell);
-                tableRows[0].closest('tbody').appendChild(row);
-                return row;
-            }
+    $(document).on('click', '#delete-records', function(event) {
+        const recordsChecked = $('.index-table').find(".select-row:checked");
+        const recordsCheckedAll = $('.index-table').find(".select-all:checked");
 
-            // Hàm tìm kiếm nâng cao
-            searchInput.addEventListener('keyup', function() {
-                const searchTerm = this.value.toLowerCase().trim();
-                let visibleRowCount = 0;
+        let ids = [];
+        let idsAll = [];
 
-                tableRows.forEach(row => {
-                    // Lấy tất cả các ô trong dòng
-                    const cells = row.querySelectorAll('td');
+        if (recordsCheckedAll.length > 0) {
+        // Nếu "chọn tất cả" được chọn, lấy tất cả ID bản ghi
+        idsAll = $('.index-table').find(".select-row").toArray()
+            .map(row => parseInt(row.value))
+            .filter(id => !isNaN(id)); // Lọc ra các giá trị không hợp lệ
+        } else {
+        // Nếu không, chỉ lấy các ID bản ghi được chọn
+        ids = recordsChecked.toArray()
+            .map(row => parseInt(row.value))
+            .filter(id => !isNaN(id)); // Lọc ra các giá trị không hợp lệ
+        }
 
-                    // Kiểm tra từng ô để tìm kiếm
-                    const match = Array.from(cells).some(cell => {
-                        // Loại bỏ các thẻ HTML để tìm kiếm
-                        const cellText = cell.textContent.replace(/<[^>]*>/g, '').toLowerCase().trim();
+        if (ids.length === 0 && idsAll.length === 0) {
+        return;
+        }
 
-                        // Tìm kiếm chính xác và gần đúng
-                        return cellText.includes(searchTerm) ||
-                               cellText.split(' ').some(word => word.startsWith(searchTerm));
-                    });
+        const confirmationModal = $("#confirmation-modal");
+        confirmationModal.modal('show');
+        confirmationModal.find("form").find('input[name="ids"][type="hidden"]').val(JSON.stringify(ids));
+        confirmationModal.find("form").find('input[name="idsAll"][type="hidden"]').val(JSON.stringify(idsAll));
+        confirmationModal.find("form").attr('action', "{{ route('admin.products.delete') }}");
+    });
 
-                    // Hiển thị/ẩn dòng
-                    if (match) {
-                        row.style.display = '';
-                        visibleRowCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
+    @if (session()->has('message'))
+        @if (session('status') === \Modules\Admin\Enums\StatusResponse::SUCCESS)
+        success("{{ session('message') }}")
+        @elseif (session('status') === \Modules\Admin\Enums\StatusResponse::FAILURE)
+        error("{{ session('message') }}")
+        @endif
+    @endif
+    });
 
-                // Hiển thị/ẩn dòng thông báo không có kết quả
-                noResultsRow.style.display = visibleRowCount > 0 ? 'none' : '';
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+    // Lưu trữ DOM ban đầu của bảng
+    const tableBody = document.querySelector('tbody');
+    const originalRows = Array.from(tableBody.querySelectorAll('tr'));
+    let noResultsRow = null;
 
-            // Hàm debounce để tránh gọi quá nhiều request
-            function debounce(func, delay) {
-                let debounceTimer;
-                return function() {
-                    const context = this;
-                    const args = arguments;
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => func.apply(context, args), delay);
-                }
-            }
+    // Tạo hàng "Không tìm thấy kết quả"
+    function createNoResultsRow() {
+        const row = document.createElement('tr');
+        row.classList.add('no-results-row');
+        const cell = document.createElement('td');
+        cell.setAttribute('colspan', originalRows.length > 0 ? originalRows[0].children.length : 5);
+        cell.classList.add('text-center', 'text-muted', 'py-4');
+        cell.textContent = 'Không tìm thấy kết quả phù hợp';
+        row.appendChild(cell);
+        return row;
+    }
 
-            // Xử lý tìm kiếm Ajax
-            searchInput.addEventListener('input', debounce(function() {
-                const searchTerm = this.value.trim();
+    // Khởi tạo hàng thông báo không có kết quả
+    noResultsRow = createNoResultsRow();
 
-                if (searchTerm.length < 2) return; // Tránh search quá ngắn
+    // Thiết lập sự kiện tìm kiếm với debounce để tối ưu hiệu suất
+    const searchInput = document.querySelector('.dt-search input[type="search"]');
 
-                fetch(`{{ route('admin.products.search') }}?search=${encodeURIComponent(searchTerm)}`, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    updateTableWithSearchResults(data.products);
-                })
-                .catch(error => {
-                    console.error('Lỗi tìm kiếm:', error);
-                });
-            }, 300));
+    if (searchInput) {
+        let debounceTimer;
 
-            // Hàm cập nhật bảng kết quả tìm kiếm
-            function updateTableWithSearchResults(products) {
-                const tbody = document.querySelector('tbody');
-                tbody.innerHTML = ''; // Xóa các dòng cũ
+        searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => performSearch(this.value.trim().toLowerCase()), 300);
+        });
 
-                if (products.data.length === 0) {
-                    noResultsRow.style.display = '';
-                    return;
-                }
+        // Thêm sự kiện để xử lý khi người dùng xóa toàn bộ văn bản bằng nút X
+        searchInput.addEventListener('search', function() {
+        if (this.value === '') {
+            performSearch('');
+        }
+        });
 
-                products.data.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>
-                            <div class="checkbox">
-                                <input type="checkbox" class="select-row" value="${product.id}" id="product-${product.id}">
-                                <label for="product-${product.id}"></label>
-                            </div>
-                        </td>
-                        <td>${product.id}</td>
-                        <td>
-                            <img src="${product.thumbnail}" alt="${product.name}" class="img-thumbnail" style="max-width: 100px;">
-                        </td>
-                        <td>${product.name}</td>
-                        <td>${product.formatted_price}</td>
-                        <td>${product.in_stock}</td>
-                        <td>${product.status}</td>
-                        <td>${product.formatted_updated_at}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
+        // Hàm tìm kiếm
+        function performSearch(searchTerm) {
+        // Xóa hàng "không tìm thấy kết quả" nếu đã tồn tại
+        if (noResultsRow.parentNode) {
+            noResultsRow.remove();
+        }
+
+        // Nếu ô tìm kiếm trống, khôi phục trạng thái ban đầu
+        if (searchTerm === '') {
+            resetTable();
+            return;
+        }
+
+        // Ẩn tất cả các hàng trước
+        let visibleCount = 0;
+
+        originalRows.forEach(row => {
+            const rowText = row.textContent.toLowerCase();
+            const shouldShow = rowText.includes(searchTerm);
+
+            if (shouldShow) {
+            row.style.display = '';
+            visibleCount++;
+            } else {
+            row.style.display = 'none';
             }
         });
-    </script>
+
+        // Hiển thị thông báo nếu không có kết quả
+        if (visibleCount === 0) {
+            tableBody.appendChild(noResultsRow);
+        }
+        }
+
+        // Hàm reset bảng về trạng thái ban đầu
+        function resetTable() {
+        originalRows.forEach(row => {
+            row.style.display = '';
+        });
+        }
+    }
+    });
+</script>
 @endpush
