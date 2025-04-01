@@ -30,10 +30,10 @@ Route::middleware(['web', 'auth:api'])->group(function () {
 
     Route::post('users/bulk-delete', [UserController::class, 'bulkDestroy'])->name('users.bulk_delete');
 
-    // User Profile
-    Route::get('profile', [UserController::class, 'profile'])->name('admin.profile');
-    Route::post('profile', [UserController::class, 'updateProfile'])->name('admin.profile.update');
-    Route::post('change-password', [UserController::class, 'changePassword'])->name('admin.password.change');
+    // // User Profile
+    // Route::get('profile', [UserController::class, 'profile'])->name('admin.profile');
+    // Route::post('profile', [UserController::class, 'updateProfile'])->name('admin.profile.update');
+    // Route::post('change-password', [UserController::class, 'changePassword'])->name('admin.password.change');
 });
 // // Route tạm thời để kiểm tra và tạo user admin
 // Route::get('/check-user', function() {

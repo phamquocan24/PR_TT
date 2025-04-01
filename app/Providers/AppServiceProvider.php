@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Thêm dòng này để đăng ký trực tiếp namespace 'admin'
+        $this->loadTranslationsFrom(base_path('modules/Admin/Resources/lang'), 'admin');
     }
 }

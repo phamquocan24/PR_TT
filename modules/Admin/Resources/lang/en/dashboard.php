@@ -1,44 +1,67 @@
 <?php
 
 return [
-    'dashboard' => 'Dashboard',
+    'title' => 'Dashboard',
     'total_sales' => 'Total Sales',
     'total_orders' => 'Total Orders',
     'total_products' => 'Total Products',
     'total_customers' => 'Total Customers',
-    'no_data' => 'No data available!',
-    'latest_searches' => 'Latest Searches',
-    'latest_orders' => 'Latest Orders',
-    'latest_reviews' => 'Latest Reviews',
-    'table' => [
-        'customer' => 'Customer',
-        'latest_searches' => [
-            'keyword' => 'Keyword',
-            'results' => 'Results',
-            'hits' => 'Hits',
-        ],
-        'latest_orders' => [
-            'order_id' => 'Order ID',
-            'status' => 'Status',
-            'total' => 'Total',
-        ],
-        'latest_reviews' => [
-            'product' => 'Product',
-            'rating' => 'Rating',
-        ],
+
+    // Key cho biểu đồ giá sản phẩm
+    'product_price_chart' => [
+        'title' => 'Product Price Comparison',
     ],
-    'sales_analytics_title' => 'Sales Analystics',
+
+    // Key cho sản phẩm mới nhất
+    'latest_products' => [
+        'title' => 'Latest Products',
+        'name' => 'Product Name',
+        'sku' => 'SKU',
+        'price' => 'Price',
+        'status' => 'Status'
+    ],
+
+    // Key cho thương hiệu mới nhất
+    'latest_brands' => [
+        'title' => 'Latest Brands',
+        'name' => 'Brand Name',
+        'products_count' => 'Products',
+        'status' => 'Status',
+    ],
+
+    // Key cho người dùng mới nhất
+    'latest_users' => [
+        'title' => 'Latest Users',
+        'name' => 'User Name',
+        'email' => 'Email',
+        'role' => 'Role',
+    ],
+
+    // Giữ lại các key cũ cho khả năng tương thích
+    'dashboard' => 'Dashboard',
+    'no_data' => 'No data available!',
+    'latest_searches' => [
+        'title' => 'Latest Searches',
+        'keyword' => 'Keyword',
+        'results' => 'Results',
+        'hits' => 'Hits',
+    ],
+    'latest_orders' => [
+        'title' => 'Latest Orders',
+        'order_id' => 'Order ID',
+        'customer' => 'Customer',
+        'status' => 'Status',
+        'total' => 'Total',
+    ],
+    'latest_reviews' => [
+        'title' => 'Latest Reviews',
+        'product' => 'Product',
+        'customer' => 'Customer',
+        'rating' => 'Rating',
+    ],
     'sales_analytics' => [
+        'title' => 'Sales Analytics',
         'orders' => 'Orders',
         'sales' => 'Sales',
-        'day_names' => [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-        ],
     ],
 ];
