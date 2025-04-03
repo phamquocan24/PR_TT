@@ -4,8 +4,6 @@ namespace Modules\User\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use Modules\User\Entities\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,8 +14,8 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => [
-            'getLogin', 'postLogin', 'getReset', 'postReset', 'login', 'register'
+        $this->middleware('auth', ['except' => [
+            'getLogin', 'postLogin', 'getReset', 'postReset'
         ]]);
     }
 
@@ -44,47 +42,30 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         try {
-            \Log::info('Đang thử JWT auth với credentials');
-            if (!auth('api')->attempt($credentials)) {
-                \Log::info('JWT auth thất bại');
+            \Log::info('Đang thử auth với credentials');
+            if (!Auth::attempt($credentials)) {
+                \Log::info('Auth thất bại');
                 return back()
                     ->withInput($request->only('email'))
                     ->withErrors(['email' => 'Thông tin đăng nhập không hợp lệ']);
             }
 
-            \Log::info('JWT auth thành công');
+            \Log::info('Auth thành công');
 
             // Cập nhật thời gian đăng nhập cuối
-            $user = auth('api')->user();
+            $user = Auth::user();
             $user->last_login = now();
             $user->save();
-            // Lấy token JWT và lưu vào session
-            $token = JWTAuth::fromUser($user);
-            session(['jwt_token' => $token]);
-
-            \Log::info('JWT token đã được lưu vào session');
 
             // Nếu yêu cầu là AJAX hoặc mong đợi JSON
             if ($request->expectsJson()) {
-                $token = JWTAuth::fromUser($user);
                 return response()->json([
-                    'token' => $token,
                     'user' => $user
                 ]);
             }
 
-            return view('admin::dashboard.index');
+            return redirect()->route('admin.dashboard.index');
 
-        } catch (JWTException $e) {
-            \Log::error('JWT Error: ' . $e->getMessage());
-
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Không thể tạo token'], 500);
-            }
-
-            return back()
-                ->withInput($request->only('email'))
-                ->withErrors(['email' => 'Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại sau.']);
         } catch (\Exception $e) {
             \Log::error('Exception: ' . $e->getMessage());
 
@@ -97,17 +78,10 @@ class AuthController extends Controller
     public function getLogout(Request $request)
     {
         try {
-            // Kiểm tra xem người dùng đã đăng nhập chưa
-            if (auth('api')->check()) {
-                // Xử lý logout với JWT
-                try {
-                    JWTAuth::parseToken()->invalidate();
-                } catch (\Exception $e) {
-                    // Bỏ qua lỗi nếu không có token hợp lệ
-                }
+            Auth::logout();
 
-                auth('api')->logout();
-            }
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
             // Xử lý phản hồi dựa trên loại yêu cầu
             if ($request->expectsJson()) {
@@ -154,88 +128,5 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()->route('login')->with('success', 'Mật khẩu đã được đặt lại thành công');
-    }
-
-    // API auth methods
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        // Cập nhật thời gian đăng nhập cuối
-        $user = auth('api')->user();
-        $user->last_login = now();
-        $user->save();
-
-        return $this->respondWithToken($token);
-    }
-
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => UserRole::MEMBER,
-        ]);
-
-        $token = auth('api')->login($user);
-
-        return $this->respondWithToken($token);
-    }
-
-    public function logout()
-    {
-        auth('api')->logout();
-        return response()->json(['message' => 'Successfully logged out']);
-    }
-
-    public function refresh()
-    {
-        try {
-            $token = JWTAuth::parseToken()->refresh();
-            return $this->respondWithToken($token);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Không thể làm mới token: ' . $e->getMessage()], 401);
-        }
-    }
-
-    public function me()
-    {
-        return response()->json(auth('api')->user());
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => config('jwt.ttl') * 60,
-            'user' => auth('api')->user()
-        ]);
     }
 }

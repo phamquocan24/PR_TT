@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\User\Http\Controllers\AuthController;
 use Modules\User\Http\Controllers\User\UserController;
 use Modules\Admin\Http\Controllers\Admin\DashboardController;
+use Modules\User\Http\Controllers\ProfileController;
 
 // Route xác thực (không cần đăng nhập)
 Route::get('login', [AuthController::class, 'getLogin'])->name('login');
@@ -13,7 +14,7 @@ Route::get('password/reset', [AuthController::class, 'getReset'])->name('auth.re
 Route::post('password/reset', [AuthController::class, 'postReset'])->name('auth.reset.post');
 
 // Routes yêu cầu đăng nhập
-Route::middleware(['web', 'auth:api'])->group(function () {
+Route::middleware(['web', 'auth'])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard.index');
 
@@ -30,10 +31,10 @@ Route::middleware(['web', 'auth:api'])->group(function () {
 
     Route::post('users/bulk-delete', [UserController::class, 'bulkDestroy'])->name('users.bulk_delete');
 
-    // // User Profile
-    // Route::get('profile', [UserController::class, 'profile'])->name('admin.profile');
-    // Route::post('profile', [UserController::class, 'updateProfile'])->name('admin.profile.update');
-    // Route::post('change-password', [UserController::class, 'changePassword'])->name('admin.password.change');
+    // Profile routes
+    Route::get('profile', [ProfileController::class, 'index'])->name('user.profile.index');
+    Route::put('profile/account', [ProfileController::class, 'updateAccount'])->name('user.profile.update.account');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('user.profile.update.password');
 });
 // // Route tạm thời để kiểm tra và tạo user admin
 // Route::get('/check-user', function() {

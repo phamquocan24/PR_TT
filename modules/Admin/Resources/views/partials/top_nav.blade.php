@@ -2,7 +2,7 @@
     <ul class="nav navbar-nav clearfix">
         <li class="user dropdown top-nav-menu pull-right">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <span>Admin Panel</span>
+                <span>{{ Auth::user()->full_name ?? 'Admin Panel' }}</span>
                 <div class="dropdown-arrow-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="9" viewBox="0 0 18 9" fill="none">
                         <path d="M16.9201 0.949951L10.4001 7.46995C9.63008 8.23995 8.37008 8.23995 7.60008 7.46995L1.08008 0.949951" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -12,21 +12,21 @@
 
             <ul class="dropdown-menu">
                 <li class="profile-details">
-                    <span class="profile-first-letter">Admin Panel</span>
+                    <span class="profile-first-letter">{{ substr(Auth::user()->first_name ?? 'A', 0, 1) }}</span>
 
                     <div class="profile-info">
                         <h4>
-                            <span>Admin Panel</span>
+                            <span>{{ Auth::user()->full_name ?? 'Admin Panel' }}</span>
 
-                            <span>Admin</span>
+                            <span>{{ Auth::user()->isAdmin() ? 'Admin' : 'User' }}</span>
                         </h4>
 
-                        <span class="profile-email">admin@gmail.com</span>
+                        <span class="profile-email">{{ Auth::user()->email ?? 'admin@gmail.com' }}</span>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="{{ route('user.profile.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="#292D32" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -36,7 +36,7 @@
                 </li>
 
                 <li>
-                    <form id="logout-form" action="{{ route('admin.logout.post') }}" method="POST" style="display: none;">
+                    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
                     <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
